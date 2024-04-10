@@ -132,8 +132,6 @@ if not is_android then
   -- only useful when the option clipboard is commented on ./1-options.lua
   maps.n["<C-y>"] = { '"+y<esc>', desc = "Copy to cliboard" }
   maps.x["<C-y>"] = { '"+y<esc>', desc = "Copy to cliboard" }
-  maps.n["<C-d>"] = { '"+y<esc>dd', desc = "Copy to clipboard and delete line" }
-  maps.x["<C-d>"] = { '"+y<esc>dd', desc = "Copy to clipboard and delete line" }
   maps.n["<C-p>"] = { '"+p<esc>', desc = "Paste from clipboard" }
 end
 
@@ -923,6 +921,10 @@ if is_available("telescope.nvim") then
     end,
     desc = "Find themes",
   }
+  maps.n["<leader>fg"] = {
+    function() require("telescope.builtin").live_grep() end,
+    desc = "Find words in project (no hidden)",
+  }
   maps.n["<leader>ff"] = {
     function()
       require("telescope.builtin").live_grep({
@@ -933,10 +935,6 @@ if is_available("telescope.nvim") then
       })
     end,
     desc = "Find words in project",
-  }
-  maps.n["<leader>fF"] = {
-    function() require("telescope.builtin").live_grep() end,
-    desc = "Find words in project (no hidden)",
   }
   maps.n["<leader>f/"] = {
     function() require("telescope.builtin").current_buffer_fuzzy_find() end,
