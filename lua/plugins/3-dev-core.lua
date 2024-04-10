@@ -177,7 +177,7 @@ return {
   -- https://github.com/nvim-java/nvim-java
   -- Reliable jdtls support. Must go before mason-lspconfig and lsp-config.
   {
-    "nvim-java/nvim-java",
+    'mfussenegger/nvim-jdtls',
     ft = { "java" },
     dependencies = {
       "nvim-java/lua-async-await",
@@ -208,6 +208,9 @@ return {
         '.git',
       },
     },
+    config = function ()
+      require('base.utils.jdtls')
+    end
   },
 
   --  nvim-lspconfig [lsp configs]
