@@ -17,6 +17,42 @@
 local M = {}
 local utils = require "base.utils"
 local stored_handlers = {}
+local bemol = function()
+  local bemol_dir = vim.fs.find({ '.bemol' }, { upward = true, type = 'directory' })[1]
+  local ws_folders_lsp = {}
+  if bemol_dir then
+    local file = io.open(bemol_dir .. '/ws_root_folders', 'r')
+    if file then
+      for line in file:lines() do
+        table.insert(ws_folders_lsp, line)
+      end
+      file:close()
+    end
+  end
+
+  for _, line in ipairs(ws_folders_lsp) do
+    vim.lsp.buf.add_workspace_folder(line)
+  end
+end
+
+-- local setup_bemol_servers = {'jdtls', 'basedpyright'}
+-- local setup_bemol = function(server_name)
+--   stored_handlers[server_name] = function()
+--     require('lspconfig')[server_name].setup({
+--       on_attach = function(client, bufnr)
+--         local old_on_attach = require('lspconfig')[server_name].on_attach
+--         if type(old_on_attach) == "function" then old_on_attach(client, bufnr) end
+--         bemol()
+--         M.apply_user_lsp_mappings(client, bufnr)
+--       end
+--     })
+--   end
+-- end
+--
+-- for _, server_name in ipairs(setup_bemol_servers) do
+--   setup_bemol(server_name)
+-- end
+
 
 --- Apply default settings for diagnostics, formatting, and lsp capabilities.
 --- It only need to be executed once, normally on mason-lspconfig.
@@ -159,6 +195,8 @@ function M.apply_user_lsp_settings(server_name)
   opts.on_attach = function(client, bufnr)
     -- If the server on_attach function exist → server.on_attach(client, bufnr)
     if type(old_on_attach) == "function" then old_on_attach(client, bufnr) end
+    -- apply bemol
+    bemol()
     -- Also, apply mappings to the buffer.
     M.apply_user_lsp_mappings(client, bufnr)
   end
