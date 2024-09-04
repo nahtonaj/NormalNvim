@@ -188,24 +188,6 @@ function M.apply_user_lsp_settings(server_name)
         }
       }
     }
-
-    -- local bemol_dir = vim.fs.find({ '.bemol' }, { upward = true, type = 'directory' })[1]
-    -- local ws_folders_lsp = {}
-    -- if bemol_dir then
-    --   local file = io.open(bemol_dir .. '/ws_root_folders', 'r')
-    --   if file then
-    --     for line in file:lines() do
-    --       table.insert(ws_folders_lsp, line)
-    --     end
-    --     file:close()
-    --   end
-    -- end
-    -- opts.init_options = {
-    --   workspaceFolders = ws_folders_lsp,
-    -- }
-    -- opts.flags = {
-    --   allow_incremental_sync = true,
-    -- }
   end
 
   -- Apply them
