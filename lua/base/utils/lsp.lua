@@ -128,7 +128,7 @@ M.apply_default_lsp_settings = function()
   vim.diagnostic.config(M.diagnostics[vim.g.diagnostics_mode])
 
   -- Apply formatting settings
-  M.formatting = { format_on_save = { enabled = true }, disabled = {} }
+  M.formatting = { format_on_save = { enabled = false }, disabled = {} }
   if type(M.formatting.format_on_save) == "boolean" then
     M.formatting.format_on_save = { enabled = M.formatting.format_on_save }
   end
@@ -188,6 +188,24 @@ function M.apply_user_lsp_settings(server_name)
   if server_name == "yamlls" then -- Add schemastore schemas
     local is_schemastore_loaded, schemastore = pcall(require, "schemastore")
     if is_schemastore_loaded then opts.settings = { yaml = { schemas = schemastore.yaml.schemas() } } end
+  end
+  if server_name == "jdtls" then -- add custom formatting rules
+    opts.settings = {
+      java = {
+        sources = {
+          organizeImports = {
+            starThreshold = 99,
+            staticStarThreshold = 99
+          }
+        },
+        format = {
+          settings = {
+            profile = 'DdbLogService',
+            url = '/local/home/jonatgao/workplace/DdbLogService.xml'
+          }
+        }
+      }
+    }
   end
 
   -- Apply them

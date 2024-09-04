@@ -85,8 +85,8 @@ return {
     "cappyzawa/trim.nvim",
     event = "BufWrite",
     opts = {
-      trim_on_write = true,
-      trim_trailing = true,
+      trim_on_write = false,
+      trim_trailing = false,
       trim_last_line = false,
       trim_first_line = false,
       -- ft_blocklist = { "markdown", "text", "org", "tex", "asciidoc", "rst" },
@@ -319,12 +319,12 @@ return {
           content_layout = "center",
           sources = {
             {
-              source = "filesystem",
-              display_name = get_icon("FolderClosed", 1, true) .. "File",
-            },
-            {
               source = "buffers",
               display_name = get_icon("DefaultFile", 1, true) .. "Bufs",
+            },
+            {
+              source = "filesystem",
+              display_name = get_icon("FolderClosed", 1, true) .. "File",
             },
             {
               source = "git_status",
