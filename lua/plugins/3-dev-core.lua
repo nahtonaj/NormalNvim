@@ -200,7 +200,7 @@ return {
     },
     opts = {
       notifications = {
-        dap = false,
+        dap = true,
       },
       -- NOTE: One of these files must be in your project root directory.
       --       Otherwise the debugger will end in the wrong directory and fail.
@@ -214,6 +214,8 @@ return {
         'build.gradle',
         'build.gradle.kts',
         '.git',
+        'packageInfo',
+        'Config'
       },
     },
   },
