@@ -47,7 +47,6 @@ return {
   { "ludovicchabant/vim-gutentags", commit = "aa47c5e29c37c52176c44e61c780032dfacef3dd" },
   { "luisiacc/gruvbox-baby", commit = "bd52e62d8134647090108189e69c8b3cd18bdbbf" },
   { "marko-cerovac/material.nvim", commit = "ac8f02e97e359b7d258c0a00ec0949fe880790ad" },
-  { "max397574/better-escape.nvim", commit = "bb197e51a91a635deb88630813c3bfc284413697" },
   { "mfussenegger/nvim-dap", commit = "90616ae6ae40053103dc66872886fc26b94c70c8" },
   { "mikavilpas/yazi.nvim", version = "^6" },
   { "mrjones2014/smart-splits.nvim", version = "^1" },
