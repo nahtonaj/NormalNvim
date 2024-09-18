@@ -125,13 +125,13 @@ return {
 
   -- better-scape.nvim [esc]
   -- https://github.com/max397574/better-escape.nvim
-  {
-    "max397574/better-escape.nvim",
-    event = "User BaseDefered",
-    opts = {
-      timeout = 300,
-    }
-  },
+  -- {
+  --   "max397574/better-escape.nvim",
+  --   event = "User BaseDefered",
+  --   opts = {
+  --     timeout = 300,
+  --   }
+  -- },
 
   -- Toggle floating terminal on <F7> [term]
   -- https://github.com/akinsho/toggleterm.nvim
