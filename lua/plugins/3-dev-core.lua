@@ -352,7 +352,7 @@ return {
     opts = {
       aggressive_mode = false,
       excluded_lsp_clients = {
-        "null-ls", "jdtls", "marksman"
+        "null-ls", "jdtls", "marksman", "lua_ls"
       },
       grace_period = (60 * 15),
       wakeup_delay = 3000,
@@ -397,6 +397,7 @@ return {
         { path = "nvim-autopairs", mods = { "nvim-autopairs" } },
         { path = "lsp_signature", mods = { "lsp_signature" } },
         { path = "nvim-lightbulb", mods = { "nvim-lightbulb" } },
+        { path = "hot-reload.nvim", mods = { "hot-reload" } },
         { path = "distroupdate.nvim", mods = { "distroupdate" } },
 
         { path = "tokyonight.nvim", mods = { "tokyonight" } },
