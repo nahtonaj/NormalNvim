@@ -860,6 +860,10 @@ if is_available("telescope.nvim") then
     end,
     desc = "Find nvim config files",
   }
+  maps.n["<C-q>"] = {
+    function() require("telescope.builtin").buffers({ ignore_current_buffer = true }) end,
+    desc = "Find buffers",
+  }
   maps.n["<leader>fB"] = {
     function() require("telescope.builtin").buffers() end,
     desc = "Find buffers",
