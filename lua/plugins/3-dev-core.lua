@@ -152,7 +152,7 @@ return {
     opts = {
       heading = {
         sign = false,
-        icons = { ' ', ' ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
+        icons = require("base.utils").get_icon("RenderMarkdown"),
         width = "block",
       },
       code = {
@@ -265,9 +265,9 @@ return {
       },
       ui = {
         icons = {
-          package_installed = "✓",
-          package_uninstalled = "✗",
-          package_pending = "⟳",
+          package_installed = require("base.utils").get_icon("MasonInstalled"),
+          package_uninstalled = require("base.utils").get_icon("MasonUninstalled"),
+          package_pending = require("base.utils").get_icon("MasonPending"),
         },
       },
     }
