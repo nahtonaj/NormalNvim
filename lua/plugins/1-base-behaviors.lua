@@ -328,14 +328,6 @@ return {
               display_name = get_icon("DefaultFile", true) .. " Bufs",
             },
             {
-              source = "filesystem",
-              display_name = get_icon("FolderClosed", 1, true) .. "File",
-            },
-            {
-              source = "buffers",
-              display_name = get_icon("DefaultFile", 1, true) .. "Bufs",
-            },
-            {
               source = "git_status",
               display_name = get_icon("Git", true) .. " Git",
             },
