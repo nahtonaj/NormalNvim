@@ -171,8 +171,8 @@ return {
     opts = function()
       local config = require('session_manager.config')
       return {
-        autoload_mode = config.AutoloadMode.Disabled,
-        autosave_last_session = false,
+        autoload_mode = config.AutoloadMode.LastSession,
+        autosave_last_session = true,
         autosave_only_in_session = false,
       }
     end,
@@ -547,6 +547,11 @@ return {
   {
     "folke/zen-mode.nvim",
     cmd = "ZenMode",
+    opts = {
+      window = {
+        width = .5
+      }
+    }
   },
 
   --  suda.nvim [write as sudo]

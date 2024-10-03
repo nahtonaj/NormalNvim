@@ -189,6 +189,18 @@ function M.apply_user_lsp_settings(server_name)
       }
     }
   end
+  if server_name == "pylsp" then
+    opts.settings = {
+      pylsp = {
+        plugins = {
+          pycodestyle = {
+            ignore = { 'E501' },
+            maxLineLength = 120
+          }
+        }
+      }
+    }
+   end
 
   -- Apply them
   local old_on_attach = server.on_attach
