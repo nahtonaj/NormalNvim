@@ -79,7 +79,6 @@ vim.g.diagnostics_mode = 3 -- Set code linting (0=off, 1=only show in status lin
 vim.g.fallback_icons_enabled = false -- Enable it if you need to use Neovim in a machine without nerd fonts.
 vim.g.inlay_hints_enabled = false -- Enable always show function parameter names.
 vim.g.icons_enabled = true -- Enable icons in the UI (disable if no nerd font is available).
-vim.g.inlay_hints_enabled = true -- Enable always show function parameter names.
 vim.g.lsp_round_borders_enabled = true -- Enable round borders for lsp hover and signatureHelp.
 vim.g.lsp_signature_enabled = true -- Enable automatically showing lsp help as you write function parameters.
 vim.g.notifications_enabled = true -- Enable notifications.
