@@ -171,7 +171,7 @@ return {
     opts = function()
       local config = require('session_manager.config')
       return {
-        autoload_mode = config.AutoloadMode.LastSession,
+        autoload_mode = config.AutoloadMode.CurrentDir,
         autosave_last_session = true,
         autosave_only_in_session = false,
       }
