@@ -634,7 +634,7 @@ return {
   {
     "echasnovski/mini.animate",
     event = "User BaseFile",
-    enabled = not is_android,
+    enabled = false,
     opts = function()
       -- don't use animate when scrolling with the mouse
       local mouse_scrolled = false

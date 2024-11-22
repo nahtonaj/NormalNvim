@@ -183,7 +183,7 @@ function M.apply_user_lsp_settings(server_name)
         format = {
           settings = {
             profile = 'DdbLogService',
-            url = '/local/home/jonatgao/workplace/DdbLogService.xml'
+            url = '/local/home/jonatgao/workplace/dotfiles/DdbLogService.xml'
           }
         }
       }

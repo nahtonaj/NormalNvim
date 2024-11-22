@@ -252,7 +252,7 @@ maps.x["G"] = {
   end,
   desc = "G and go to the last position (visual)",
 }
-maps.n["<C-a>"] = { -- to move to the previous position press ctrl + oo
+maps.n["<leader>a"] = { -- to move to the previous position press ctrl + oo
   function()
     vim.g.minianimate_disable = true
     vim.cmd("normal! gg0vG$")
@@ -1308,12 +1308,12 @@ if is_available("markdown-preview.nvim") or is_available("markmap.nvim") or is_a
 end
 
 -- [neural] -----------------------------------------------------------------
-if is_available("neural") or is_available("copilot") then
-  maps.n["<leader>a"] = {
-    function() require("neural").prompt() end,
-    desc = "Ask chatgpt",
-  }
-end
+-- if is_available "neural" or is_available "copilot" then
+--   maps.n["<leader>a"] = {
+--     function() require("neural").prompt() end,
+--     desc = "Ask chatgpt",
+--   }
+-- end
 
 -- hop.nvim ----------------------------------------------------------------
 if is_available("hop.nvim") then
