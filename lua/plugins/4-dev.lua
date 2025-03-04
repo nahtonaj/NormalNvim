@@ -918,7 +918,7 @@ return {
       arg = leet_arg,
 
       ---@type lc.lang
-      lang = "python",
+      lang = "python3",
 
       cn = { -- leetcode.cn
         enabled = false, ---@type boolean
