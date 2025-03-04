@@ -408,7 +408,7 @@ maps.n["<leader>b|"] = {
   desc = "Vertical split buffer from tabline",
 }
 
--- quick movement aliases
+-- quick buffer switching
 maps.n["<C-k>"] = {
   function()
     require("heirline-components.buffer").nav(vim.v.count > 0 and vim.v.count or 1)
@@ -420,14 +420,6 @@ maps.n["<C-j>"] = {
     require("heirline-components.buffer").nav(-(vim.v.count > 0 and vim.v.count or 1))
   end,
   desc = "Previous buffer",
-}
-maps.n["<S-Down>"] = {
-  function() vim.api.nvim_feedkeys("5j", "n", true) end,
-  desc = "Fast move down",
-}
-maps.n["<S-Up>"] = {
-  function() vim.api.nvim_feedkeys("5k", "n", true) end,
-  desc = "Fast move up",
 }
 
 -- tabs
@@ -586,9 +578,9 @@ maps.n["<leader>g"] = icons.g
 if is_available("gitsigns.nvim") then
   maps.n["<leader>g"] = icons.g
   maps.n["]g"] =
-  { function() require("gitsigns").next_hunk() end, desc = "Next Git hunk" }
+  { function() require("gitsigns").nav_hunk('next') end, desc = "Next Git hunk" }
   maps.n["[g"] = {
-    function() require("gitsigns").prev_hunk() end,
+    function() require("gitsigns").nav_hunk('prev') end,
     desc = "Previous Git hunk",
   }
   maps.n["<leader>gl"] = {
@@ -1545,21 +1537,24 @@ if is_autoformat_enabled and is_filetype_allowed and is_filetype_ignored then
   }
 
   -- Goto help
+  local lsp_hover_config = require("base.utils.lsp").lsp_hover_config
   lsp_mappings.n["gh"] = {
-    function() vim.lsp.buf.hover() end,
+    function()
+      vim.lsp.buf.hover(lsp_hover_config)
+    end,
     desc = "Hover help",
   }
   lsp_mappings.n["gH"] = {
-    function() vim.lsp.buf.signature_help() end,
+    function() vim.lsp.buf.signature_help(lsp_hover_config) end,
     desc = "Signature help",
   }
 
   lsp_mappings.n["<leader>lh"] = {
-    function() vim.lsp.buf.hover() end,
+    function() vim.lsp.buf.hover(lsp_hover_config) end,
     desc = "Hover help",
   }
   lsp_mappings.n["<leader>lH"] = {
-    function() vim.lsp.buf.signature_help() end,
+    function() vim.lsp.buf.signature_help(lsp_hover_config) end,
     desc = "Signature help",
   }
 
