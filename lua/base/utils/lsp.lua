@@ -17,7 +17,6 @@
 local M = {}
 local utils = require "base.utils"
 local stored_handlers = {}
-stored_handlers['jdtls'] = function() end
 local function find(l, value) -- find element v of l satisfying f(v)
   for _, v in ipairs(l) do
     if v == value then
