@@ -396,8 +396,6 @@ return {
 
         { path = "tokyonight.nvim", mods = { "tokyonight" } },
         { path = "astrotheme", mods = { "astrotheme" } },
-        { path = "alpha-nvim", mods = { "alpha" } },
-        { path = "nvim-notify", mods = { "notify" } },
         { path = "mini.indentscope", mods = { "mini.indentscope" } },
         { path = "heirline-components.nvim", mods = { "heirline-components" } },
         { path = "telescope.nvim", mods = { "telescope" } },
@@ -408,7 +406,6 @@ return {
         { path = "nvim-web-devicons", mods = { "nvim-web-devicons" } },
         { path = "lspkind.nvim", mods = { "lspkind" } },
         { path = "nvim-scrollbar", mods = { "scrollbar" } },
-        { path = "mini.animate", mods = { "mini.animate" } },
         { path = "highlight-undo.nvim", mods = { "highlight-undo" } },
         { path = "which-key.nvim", mods = { "which-key" } },
 

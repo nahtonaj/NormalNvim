@@ -61,6 +61,7 @@ local is_available = utils.is_available
 local ui = require("base.utils.ui")
 local maps = require("base.utils").get_mappings_template()
 local is_android = vim.fn.isdirectory('/data') == 1 -- true if on android
+local snacks_enabled = is_available("snacks.nvim")
 
 -- -------------------------------------------------------------------------
 --
@@ -446,7 +447,7 @@ if is_available("nvim-colorizer.lua") then
   { "<cmd>ColorizerToggle<cr>", desc = "color highlight" }
 end
 maps.n["<leader>ud"] = { ui.toggle_diagnostics, desc = "Diagnostics" }
-maps.n["<leader>uD"] = { ui.set_indent, desc = "Change indent setting" }
+maps.n["<leader>uI"] = { ui.set_indent, desc = "Change indent setting" }
 maps.n["<leader>ug"] = { ui.toggle_signcolumn, desc = "Signcolumn" }
 maps.n["<leader>ul"] = { ui.toggle_statusline, desc = "Statusline" }
 maps.n["<leader>un"] = { ui.change_number, desc = "Change line numbering" }
@@ -463,9 +464,9 @@ maps.n["<leader>uN"] =
 if is_available("lsp_signature.nvim") then
   maps.n["<leader>up"] = { ui.toggle_lsp_signature, desc = "LSP signature" }
 end
-if is_available("mini.animate") then
-  maps.n["<leader>uA"] = { ui.toggle_animations, desc = "Animations" }
-end
+-- if is_available("mini.animate") then
+--   maps.n["<leader>uA"] = { ui.toggle_animations, desc = "Animations" }
+-- end
 
 -- shifted movement keys ----------------------------------------------------
 maps.n["<S-Down>"] = {
@@ -555,22 +556,22 @@ vim.api.nvim_create_autocmd("CmdwinEnter", {
 -- -------------------------------------------------------------------------
 
 -- alpha-nvim --------------------------------------------------------------
-if is_available("alpha-nvim") then
-  maps.n["<leader>h"] = {
-    function()
-      local wins = vim.api.nvim_tabpage_list_wins(0)
-      if #wins > 1
-          and vim.api.nvim_get_option_value("filetype", { win = wins[1] })
-          == "neo-tree"
-      then
-        vim.fn.win_gotoid(wins[2]) -- go to non-neo-tree window to toggle alpha
-      end
-      require("alpha").start(false, require("alpha").default_config)
-      vim.b.miniindentscope_disable = true
-    end,
-    desc = "Home screen",
-  }
-end
+-- if is_available("alpha-nvim") then
+--   maps.n["<leader>h"] = {
+--     function()
+--       local wins = vim.api.nvim_tabpage_list_wins(0)
+--       if #wins > 1
+--           and vim.api.nvim_get_option_value("filetype", { win = wins[1] })
+--           == "neo-tree"
+--       then
+--         vim.fn.win_gotoid(wins[2]) -- go to non-neo-tree window to toggle alpha
+--       end
+--       require("alpha").start(false, require("alpha").default_config)
+--       vim.b.miniindentscope_disable = true
+--     end,
+--     desc = "Home screen",
+--   }
+-- end
 
 -- [git] -----------------------------------------------------------
 -- gitsigns.nvim
@@ -628,7 +629,7 @@ if is_available("vim-fugitive") then
   }
 end
 -- git client
-if vim.fn.executable "lazygit" == 1 then -- if lazygit exists, show it
+if vim.fn.executable "lazygit" == 1 and not snacks_enabled then -- if lazygit exists, show it
   maps.n["<leader>gg"] = {
     function()
       local git_dir = vim.fn.finddir(".git", vim.fn.getcwd() .. ";")
@@ -641,7 +642,7 @@ if vim.fn.executable "lazygit" == 1 then -- if lazygit exists, show it
     desc = "ToggleTerm lazygit",
   }
 end
-if vim.fn.executable "gitui" == 1 then -- if gitui exists, show it
+if vim.fn.executable "gitui" == 1 and not snacks_enabled then -- if gitui exists, show it
   maps.n["<leader>gg"] = {
     function()
       local git_dir = vim.fn.finddir(".git", vim.fn.getcwd() .. ";")
@@ -670,7 +671,7 @@ if is_available("yazi.nvim") and vim.fn.executable("yazi") == 1 then
 end
 
 -- neotree
-if is_available("neo-tree.nvim") then
+if is_available("neo-tree.nvim") and not snacks_enabled then
   maps.n["<leader>e"] = { "<cmd>Neotree toggle<cr>", desc = "Neotree" }
 end
 
@@ -808,7 +809,7 @@ if is_available("litee-calltree.nvim") then
 end
 
 -- telescope.nvim [find] ----------------------------------------------------
-if is_available("telescope.nvim") then
+if is_available("telescope.nvim") and not snacks_enabled then
   maps.n["<leader>f"] = icons.f
   maps.n["<leader>gb"] = {
     function() require("telescope.builtin").git_branches() end,
@@ -868,13 +869,6 @@ if is_available("telescope.nvim") then
     function() require("telescope.builtin").commands() end,
     desc = "Find commands",
   }
-  -- Let's disable this. It is way too imprecise. Use rnvimr instead.
-  -- maps.n["<leader>ff"] = {
-  --   function()
-  --     require("telescope.builtin").find_files { hidden = true, no_ignore = true }
-  --   end,
-  --   desc = "Find all files",
-  -- }
   -- maps.n["<leader>fF"] = {
   --   function() require("telescope.builtin").find_files() end,
   --   desc = "Find files (no hidden)",
@@ -891,7 +885,7 @@ if is_available("telescope.nvim") then
     function() require("telescope.builtin").man_pages() end,
     desc = "Find man",
   }
-  if is_available("nvim-notify") then
+  if is_available("nvim-notify") and not snacks_enabled then
     maps.n["<leader>fn"] = {
       function() require("telescope").extensions.notify.notify() end,
       desc = "Find notifications",
@@ -924,7 +918,7 @@ if is_available("telescope.nvim") then
   }
   maps.n["<leader>ff"] = {
     function()
-      require("telescope.builtin").live_grep({
+      require("telescope.builtin").find_files({
         additional_args = function(args)
           args.additional_args = { "--hidden", "--no-ignore" }
           return args.additional_args
@@ -1362,7 +1356,7 @@ function M.lsp_mappings(client, bufnr)
 
   -- Diagnostics
   lsp_mappings.n["gl"] = { function() vim.diagnostic.open_float() end, desc = "Hover diagnostics" }
-  if is_available("telescope.nvim") then
+  if is_available("telescope.nvim") and not snacks_enabled then
     lsp_mappings.n["<leader>lD"] =
       { function() require("telescope.builtin").diagnostics() end, desc = "Diagnostics" }
   end
@@ -1505,36 +1499,36 @@ if is_autoformat_enabled and is_filetype_allowed and is_filetype_ignored then
   }
 
   -- Goto definition / declaration
-  lsp_mappings.n["gd"] = {
-    function() vim.lsp.buf.definition() end,
-    desc = "Goto definition of current symbol",
-  }
-  lsp_mappings.n["gD"] = {
-    function() vim.lsp.buf.declaration() end,
-    desc = "Goto declaration of current symbol",
-  }
-
-  -- Goto implementation
-  lsp_mappings.n["gI"] = {
-    function() vim.lsp.buf.implementation() end,
-    desc = "Goto implementation of current symbol",
-  }
-
-  -- Goto type definition
-  lsp_mappings.n["gT"] = {
-    function() vim.lsp.buf.type_definition() end,
-    desc = "Goto definition of current type",
-  }
-
-  -- Goto references
-  lsp_mappings.n["<leader>lR"] = {
-    function() vim.lsp.buf.references() end,
-    desc = "Hover references",
-  }
-  lsp_mappings.n["gr"] = {
-    function() vim.lsp.buf.references() end,
-    desc = "References of current symbol",
-  }
+  -- lsp_mappings.n["gd"] = {
+  --   function() vim.lsp.buf.definition() end,
+  --   desc = "Goto definition of current symbol",
+  -- }
+  -- lsp_mappings.n["gD"] = {
+  --   function() vim.lsp.buf.declaration() end,
+  --   desc = "Goto declaration of current symbol",
+  -- }
+  --
+  -- -- Goto implementation
+  -- lsp_mappings.n["gI"] = {
+  --   function() vim.lsp.buf.implementation() end,
+  --   desc = "Goto implementation of current symbol",
+  -- }
+  --
+  -- -- Goto type definition
+  -- lsp_mappings.n["gT"] = {
+  --   function() vim.lsp.buf.type_definition() end,
+  --   desc = "Goto definition of current type",
+  -- }
+  --
+  -- -- Goto references
+  -- lsp_mappings.n["<leader>lR"] = {
+  --   function() vim.lsp.buf.references() end,
+  --   desc = "Hover references",
+  -- }
+  -- lsp_mappings.n["gr"] = {
+  --   function() vim.lsp.buf.references() end,
+  --   desc = "References of current symbol",
+  -- }
 
   -- Goto help
   local lsp_hover_config = require("base.utils.lsp").lsp_hover_config
@@ -1557,7 +1551,7 @@ if is_autoformat_enabled and is_filetype_allowed and is_filetype_ignored then
     function() vim.lsp.buf.signature_help(lsp_hover_config) end,
     desc = "Signature help",
   }
-
+  --
   -- Goto man
   lsp_mappings.n["gm"] = {
     function() vim.api.nvim_feedkeys("K", "n", false) end,
@@ -1567,7 +1561,7 @@ if is_autoformat_enabled and is_filetype_allowed and is_filetype_ignored then
     function() vim.api.nvim_feedkeys("K", "n", false) end,
     desc = "Hover man",
   }
-
+  --
   -- Rename symbol
   lsp_mappings.n["<leader>lr"] = {
     function() vim.lsp.buf.rename() end,
@@ -1594,11 +1588,11 @@ if is_autoformat_enabled and is_filetype_allowed and is_filetype_ignored then
   end
 
   -- LSP based search
-  lsp_mappings.n["<leader>lS"] = { function() vim.lsp.buf.workspace_symbol() end, desc = "Search symbol in workspace" }
-  lsp_mappings.n["gS"] = { function() vim.lsp.buf.workspace_symbol() end, desc = "Search symbol in workspace" }
+  -- lsp_mappings.n["<leader>lS"] = { function() vim.lsp.buf.workspace_symbol() end, desc = "Search symbol in workspace" }
+  -- lsp_mappings.n["gS"] = { function() vim.lsp.buf.workspace_symbol() end, desc = "Search symbol in workspace" }
 
   -- LSP telescope
-  if is_available("telescope.nvim") then -- setup telescope mappings if available
+  if is_available("telescope.nvim") and not snacks_enabled then -- setup telescope mappings if available
     if lsp_mappings.n.gd then lsp_mappings.n.gd[1] = function() require("telescope.builtin").lsp_definitions() end end
     if lsp_mappings.n.gI then
       lsp_mappings.n.gI[1] = function() require("telescope.builtin").lsp_implementations() end
