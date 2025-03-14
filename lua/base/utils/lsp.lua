@@ -17,6 +17,7 @@
 local M = {}
 local utils = require "base.utils"
 local stored_handlers = {}
+stored_handlers['jdtls'] = function() end
 local function find(l, value) -- find element v of l satisfying f(v)
   for _, v in ipairs(l) do
     if v == value then
@@ -189,8 +190,8 @@ function M.apply_user_lsp_settings(server_name)
       java = {
         sources = {
           organizeImports = {
-            starThreshold = 99,
-            staticStarThreshold = 99
+            starThreshold = 9999,
+            staticStarThreshold = 9999,
           }
         },
         format = {
@@ -198,7 +199,7 @@ function M.apply_user_lsp_settings(server_name)
             profile = 'DdbLogService',
             url = '/local/home/jonatgao/workplace/dotfiles/DdbLogService.xml'
           }
-        }
+        },
       }
     }
   end

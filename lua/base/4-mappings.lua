@@ -853,10 +853,10 @@ if is_available("telescope.nvim") and not snacks_enabled then
     end,
     desc = "Find nvim config files",
   }
-  maps.n["<C-q>"] = {
-    function() require("telescope.builtin").buffers({ ignore_current_buffer = true, sort_lastused = true }) end,
-    desc = "Find buffers",
-  }
+  -- maps.n["<C-q>"] = {
+  --   function() require("telescope.builtin").buffers({ ignore_current_buffer = true, sort_lastused = true }) end,
+  --   desc = "Find buffers",
+  -- }
   maps.n["<leader>fB"] = {
     function() require("telescope.builtin").buffers() end,
     desc = "Find buffers",
@@ -967,11 +967,11 @@ if is_available("telescope.nvim") and not snacks_enabled then
 
   -- extra - spectre.nvim (search and replace in project)
   if is_available("nvim-spectre") then
-    maps.n["<leader>fr"] = {
+    maps.n["<leader>Rr"] = {
       function() require("spectre").toggle() end,
       desc = "Find and replace word in project",
     }
-    maps.n["<leader>fb"] = {
+    maps.n["<leader>R"] = {
       function() require("spectre").toggle { path = vim.fn.expand "%:t:p" } end,
       desc = "Find and replace word in buffer",
     }
@@ -1122,11 +1122,13 @@ if is_available("nvim-dap") then
     end,
     desc = "Conditional Breakpoint (S-F9)",
   }
-  maps.n["<leader>do"] =
+  maps.n["<leader>dS"] =
+  { function() require("dap").sessions() end, desc = "Sessions" }
+  maps.n["<leader>di"] =
   { function() require("dap").step_over() end, desc = "Step Over (F10)" }
   maps.n["<leader>do"] =
   { function() require("dap").step_back() end, desc = "Step Back (S-F10)" }
-  maps.n["<leader>db"] =
+  maps.n["<leader>dI"] =
   { function() require("dap").step_into() end, desc = "Step Into (F11)" }
   maps.n["<leader>dO"] =
   { function() require("dap").step_out() end, desc = "Step Out (S-F11)" }
@@ -1144,6 +1146,7 @@ if is_available("nvim-dap") then
   { function() require("dap").repl.toggle() end, desc = "REPL" }
   maps.n["<leader>ds"] =
   { function() require("dap").run_to_cursor() end, desc = "Run To Cursor" }
+  maps.n["<leader>dl"] = { "<cmd>DapShowLog<cr>", desc = "DAP Show Logs" }
 
   if is_available("nvim-dap-ui") then
     maps.n["<leader>dE"] = {
@@ -1293,13 +1296,23 @@ if is_available("markdown-preview.nvim") or is_available("markmap.nvim") or is_a
   end
 end
 
--- [neural] -----------------------------------------------------------------
--- if is_available "neural" or is_available "copilot" then
---   maps.n["<leader>a"] = {
---     function() require("neural").prompt() end,
---     desc = "Ask chatgpt",
---   }
--- end
+-- [AmazonQ] -----------------------------------------------------------------
+if is_available "amazonq" then
+  maps.i['<C-q>'] = {
+    function()
+      local client = vim.lsp.get_clients({ bufnr = 0, name = 'amazonq-completion' })[1]
+      if not client then
+        vim.notify('Amazon Q not enabled for this buffer')
+        return
+      end
+      vim.lsp.completion.enable(true, client.id, 0)
+      vim.notify('Amazon Q: working...')
+      vim.lsp.completion.trigger()
+      -- vim.cmd[[redraw | echo '']]
+    end,
+    desc = "Trigger Q completion"
+  }
+end
 
 -- hop.nvim ----------------------------------------------------------------
 if is_available("hop.nvim") then
@@ -1635,6 +1648,16 @@ if is_autoformat_enabled and is_filetype_allowed and is_filetype_ignored then
   end
 
   return lsp_mappings
+end
+
+function M.dap_jdtls_mappings(opts)
+  local dap_mappings = require("base.utils").get_mappings_template()
+
+  dap_mappings.n["<leader>df"] = { function() require('jdtls').test_class(opts) end, desc = "Test class" }
+  dap_mappings.n["<leader>dn"] = { function() require('jdtls').test_nearest_method(opts) end, desc = "Test nearest method" }
+  dap_mappings.n["<leader>dP"] = { function() require('jdtls').pick_test(opts) end, desc = "Pick test" }
+
+  return dap_mappings
 end
 
 utils.set_mappings(maps)

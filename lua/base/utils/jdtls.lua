@@ -1,4 +1,13 @@
 local M = {}
+
+local function find(l, value) -- find element v of l satisfying f(v)
+  for _, v in ipairs(l) do
+    if v == value then
+      return v
+    end
+  end
+  return nil
+end
 M.bemol = function ()
   local bemol_dir = vim.fs.find({ '.bemol' }, { upward = true, type = 'directory' })[1]
   local ws_folders_lsp = {}
@@ -11,9 +20,12 @@ M.bemol = function ()
       file:close()
     end
   end
+  local current_ws_folders = vim.lsp.buf.list_workspace_folders()
 
   for _, line in ipairs(ws_folders_lsp) do
-    vim.lsp.buf.add_workspace_folder(line)
+    if not find(current_ws_folders, line) then
+      vim.lsp.buf.add_workspace_folder(line)
+    end
   end
 end
 
@@ -22,15 +34,15 @@ local home = os.getenv("HOME")
 local java_cmds = vim.api.nvim_create_augroup('java_cmds', { clear = true })
 local cache_vars = {}
 
-local root_files = {
-  '.git',
-  'mvnw',
-  'gradlew',
-  'pom.xml',
-  'build.gradle',
-  'build.xml',
-  'Config',
-}
+-- local root_files = {
+--   '.git',
+--   'mvnw',
+--   'gradlew',
+--   'pom.xml',
+--   'build.gradle',
+--   'build.xml',
+--   'Config',
+-- }
 
 local features = {
   -- change this to `true` to enable codelens
@@ -38,7 +50,7 @@ local features = {
 
   -- change this to `true` if you have `nvim-dap`,
   -- `java-test` and `java-debug-adapter` installed
-  debugger = false,
+  debugger = true,
 }
 
 local function get_jdtls_paths()
@@ -50,14 +62,18 @@ local function get_jdtls_paths()
 
   path.data_dir = vim.fn.stdpath('cache') .. '/nvim-jdtls'
 
-  -- local jdtls_install = require('mason-registry')
-  --     .get_package('jdtls')
-  --     :get_install_path()
-  local jdtls_install = '/local/home/jonatgao/.local/share/jdtls'
-  -- path.jdtls_bin = jdtls_install .. '/bin/jdtls'
+  local jdtls_install = require('mason-registry')
+      .get_package('jdtls')
+      :get_install_path()
+  -- local jdtls_install = '/local/home/jonatgao/.local/share/jdtls'
+  path.jdtls_bin = jdtls_install .. '/bin/jdtls'
 
-  -- path.java_agent = '/local/home/jonatgao/.local/share/lombok/lombok-edge.jar'
-  path.java_agent = jdtls_install .. '/lombok.jar'
+  path.java_agent = '/local/home/jonatgao/.local/share/lombok/lombok-edge.jar'
+  -- path.java_agent = jdtls_install .. '/lombok.jar'
+  -- path.java_agent = require('mason-registry')
+  --     .get_package('lombok-nightly')
+  --     :get_install_path() .. '/lombok.jar'
+
   path.launcher_jar = vim.fn.glob(jdtls_install .. '/plugins/org.eclipse.equinox.launcher_*.jar')
 
   if vim.fn.has('mac') == 1 then
@@ -142,15 +158,21 @@ end
 
 local function enable_debugger(bufnr)
   require('jdtls').setup_dap({ hotcodereplace = 'auto' })
-  require('jdtls.dap').setup_dap_main_class_configs()
+  require('jdtls.dap').setup_dap_main_class_configs({verbose = true})
+  local opts = {
+    config_overrides = {
+      shortenCommandLine = "argfile",
+      vmArgs = "-DmixMode=MMM --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/java.nio.channels=ALL-UNNAMED --add-opens=java.base/java.time=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent.locks=ALL-UNNAMED --add-opens=java.base/jdk.internal.access=ALL-UNNAMED --add-opens=java.base/jdk.internal.misc=ALL-UNNAMED --add-opens=java.base/jdk.internal.ref=ALL-UNNAMED --add-opens=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/sun.net.dns=ALL-UNNAMED --add-opens=java.base/sun.security.x509=ALL-UNNAMED --add-opens=java.base/sun.security.util=ALL-UNNAMED --add-opens=java.base/sun.security.ssl=ALL-UNNAMED"
+    }
+  }
 
-
-  local opts = { buffer = bufnr }
-  vim.keymap.set('n', '<leader>df', "<cmd>lua require('jdtls').test_class()<cr>", opts)
-  vim.keymap.set('n', '<leader>dn', "<cmd>lua require('jdtls').test_nearest_method()<cr>", opts)
+  local dap_mappings = require("base.4-mappings").dap_jdtls_mappings(opts)
+  require('base.utils').set_mappings(dap_mappings, { buffer = bufnr })
 end
 
 local function jdtls_on_attach(client, bufnr)
+  M.bemol()
+
   if features.debugger then
     enable_debugger(bufnr)
   end
@@ -175,7 +197,6 @@ local function jdtls_on_attach(client, bufnr)
   -- vim.keymap.set('n', 'crc', "<cmd>lua require('jdtls').extract_constant()<cr>", opts)
   -- vim.keymap.set('x', 'crc', "<esc><cmd>lua require('jdtls').extract_constant(true)<cr>", opts)
   -- vim.keymap.set('x', 'crm', "<esc><Cmd>lua require('jdtls').extract_method(true)<cr>", opts)
-  M.bemol()
 end
 
 M.jdtls_setup = function(event)
@@ -199,8 +220,17 @@ M.jdtls_setup = function(event)
   -- See: https://github.com/eclipse/eclipse.jdt.ls#running-from-the-command-line
   local cmd = {
     -- 💀
-    -- path.jdtls_bin,
-    'java',
+    path.jdtls_bin,
+    -- 'java',
+
+    '-XX:+UseParallelGC', -- Better performance for multi-core systems
+		'-XX:GCTimeRatio=4', -- Spend less time on GC
+		'-XX:AdaptiveSizePolicyWeight=90', -- Optimize for throughput
+		'-Dsun.zip.disableMemoryMapping=true', -- Reduce memory pressure
+		'-Xms1g', -- Initial heap size
+		'-Xmx8g', -- Maximum heap size
+		'-XX:+UseStringDeduplication', -- Reduce memory usage for string storage
+		'-XX:+OptimizeStringConcat', -- Optimize string concatenation
 
     '-Declipse.application=org.eclipse.jdt.ls.core.id1',
     '-Dosgi.bundles.defaultStartLevel=4',
@@ -214,6 +244,34 @@ M.jdtls_setup = function(event)
     'java.base/java.util=ALL-UNNAMED',
     '--add-opens',
     'java.base/java.lang=ALL-UNNAMED',
+    '--add-opens',
+    -- 'java.base/java.lang.reflect=ALL-UNNAMED',
+    -- '--add-opens',
+    -- 'java.base/java.io=ALL-UNNAMED',
+    -- '--add-opens',
+    -- 'java.base/java.nio=ALL-UNNAMED',
+    -- '--add-opens',
+    -- 'java.base/java.nio.channels=ALL-UNNAMED',
+    -- '--add-opens',
+    -- 'java.base/java.time=ALL-UNNAMED',
+    -- '--add-opens',
+    -- 'java.base/java.util.concurrent.locks=ALL-UNNAMED',
+    -- '--add-opens',
+    -- 'java.base/jdk.internal.access=ALL-UNNAMED',
+    -- '--add-opens',
+    -- 'java.base/jdk.internal.misc=ALL-UNNAMED',
+    -- '--add-opens',
+    -- 'java.base/jdk.internal.ref=ALL-UNNAMED',
+    -- '--add-opens',
+    -- 'java.base/sun.nio.ch=ALL-UNNAMED',
+    -- '--add-opens',
+    -- 'java.base/sun.net.dns=ALL-UNNAMED',
+    -- '--add-opens',
+    -- 'java.base/sun.security.x509=ALL-UNNAMED',
+    -- '--add-opens',
+    -- 'java.base/sun.security.util=ALL-UNNAMED',
+    -- '--add-opens',
+    -- 'java.base/sun.security.ssl=ALL-UNNAMED',
 
     -- 💀
     '-jar',
@@ -232,14 +290,14 @@ M.jdtls_setup = function(event)
     java = {
       -- jdt = {
       --   ls = {
-      --     vmargs = "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx1G -Xms100m"
+      --     vmargs = "-DmixMode=MMM --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/java.nio.channels=ALL-UNNAMED --add-opens=java.base/java.time=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent.locks=ALL-UNNAMED --add-opens=java.base/jdk.internal.access=ALL-UNNAMED --add-opens=java.base/jdk.internal.misc=ALL-UNNAMED --add-opens=java.base/jdk.internal.ref=ALL-UNNAMED --add-opens=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/sun.net.dns=ALL-UNNAMED --add-opens=java.base/sun.security.x509=ALL-UNNAMED --add-opens=java.base/sun.security.util=ALL-UNNAMED --add-opens=java.base/sun.security.ssl=ALL-UNNAMED"
       --   }
       -- },
       eclipse = {
         downloadSources = true,
       },
       configuration = {
-        updateBuildConfiguration = 'interactive',
+        updateBuildConfiguration = 'automatic',
         runtimes = path.runtimes,
       },
       maven = {
@@ -251,17 +309,26 @@ M.jdtls_setup = function(event)
       referencesCodeLens = {
         enabled = true,
       },
-      -- inlayHints = {
-      --   parameterNames = {
-      --     enabled = 'all' -- literals, all, none
-      --   }
-      -- },
+      references = {
+				includeDecompiledSources = true,
+				includeAccessors = true,
+				includeDeclaration = true,
+			},
+			quickfix = {
+				enabled = true,
+			},
+			inlayHints = {
+				parameterNames = {
+					enabled = "all",
+				},
+			},
       format = {
         enabled = true,
         settings = {
-          url = "file:///local/home/jonatgao/workplace/dotfiles/DdbLogService.xml",
-        },
-      }
+          profile = 'DdbLogService',
+          url = '/local/home/jonatgao/workplace/dotfiles/DdbLogService.xml'
+        }
+      },
     },
     signatureHelp = {
       enabled = true,
@@ -275,6 +342,13 @@ M.jdtls_setup = function(event)
         'java.util.Objects.requireNonNull',
         'java.util.Objects.requireNonNullElse',
         'org.mockito.Mockito.*',
+      },
+      filteredTypes = {
+        "com.sun.*",
+        "io.micrometer.shaded.*",
+        "java.awt.*",
+        "jdk.*",
+        "sun.*",
       },
     },
     contentProvider = {
@@ -297,32 +371,15 @@ M.jdtls_setup = function(event)
 
   local ws_folders_jdtls = {}
   local root_dir = jdtls.setup.find_root({ "packageInfo" }, "Config")
-  if root_dir then
-    local file = io.open(root_dir .. "/.bemol/ws_root_folders")
-    if file then
-      for line in file:lines() do
-        table.insert(ws_folders_jdtls, "file://" .. line)
-      end
-      file:close()
-    end
-  end
-
-  -- return {
-  --   cmd = cmd,
-  --   settings = lsp_settings,
-  --   on_attach = jdtls_on_attach,
-  --   capabilities = cache_vars.capabilities,
-  --   root_dir = function()
-  --     jdtls.setup.find_root(root_files)
-  --   end,
-  --   flags = {
-  --     allow_incremental_sync = true,
-  --   },
-  --   init_options = {
-  --     bundles = path.bundles,
-  --     workspaceFolders = ws_folders_jdtls,
-  --   },
-  -- }
+  -- if root_dir then
+  --   local file = io.open(root_dir .. "/.bemol/ws_root_folders")
+  --   if file then
+  --     for line in file:lines() do
+  --       table.insert(ws_folders_jdtls, "file://" .. line)
+  --     end
+  --     file:close()
+  --   end
+  -- end
 
   -- This starts a new client & server,
   -- or attaches to an existing client & server depending on the `root_dir`.
@@ -331,34 +388,15 @@ M.jdtls_setup = function(event)
     settings = lsp_settings,
     on_attach = jdtls_on_attach,
     capabilities = cache_vars.capabilities,
-    root_dir = jdtls.setup.find_root(root_files),
+    root_dir = jdtls.setup.find_root({ "packageInfo" }, "Config"),
     flags = {
       allow_incremental_sync = true,
     },
     init_options = {
       bundles = path.bundles,
-      workspaceFolders = ws_folders_jdtls,
+      -- workspaceFolders = ws_folders_jdtls,
     },
   })
-
-  -- require('lspconfig').jdtls.setup({
-  --   cmd = cmd,
-  --   settings = lsp_settings,
-  --   -- on_attach = jdtls_on_attach,
-  --   capabilities = cache_vars.capabilities,
-  --   root_dir = function()
-  --     return jdtls.setup.find_root(root_files)
-  --     -- return vim.fn.getcwd()
-  --   end,
-  --   flags = {
-  --     allow_incremental_sync = true,
-  --   },
-  --   init_options = {
-  --     bundles = path.bundles,
-  --     workspaceFolders = ws_folders_jdtls,
-  --   },
-  -- })
-
 end
 
 vim.api.nvim_create_autocmd('FileType', {

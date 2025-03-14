@@ -145,6 +145,12 @@ return {
     end,
   },
 
+  { url = "ssh://git.amazon.com:2222/pkg/Vim-code-browse",
+    branch = "mainline",
+    dependencies = "tpope/vim-fugitive",
+    event = "VeryLazy",
+  },
+
   --  ANALYZER ----------------------------------------------------------------
   --  [symbols tree]
   --  https://github.com/stevearc/aerial.nvim
@@ -314,21 +320,37 @@ return {
   --  NOTE: In order for this plugin to work, you will have to set
   --        the next env var in your OS:
   --        OPENAI_API_KEY="my_key_here"
+  -- {
+  --   "dense-analysis/neural",
+  --   cmd = { "Neural" },
+  --   config = function()
+  --     require("neural").setup {
+  --       source = {
+  --         openai = {
+  --           api_key = vim.env.OPENAI_API_KEY,
+  --         },
+  --       },
+  --       ui = {
+  --         prompt_icon = require("base.utils").get_icon("PromptPrefix"),
+  --       },
+  --     }
+  --   end,
+  -- },
+
   {
-    "dense-analysis/neural",
-    cmd = { "Neural" },
-    config = function()
-      require("neural").setup {
-        source = {
-          openai = {
-            api_key = vim.env.OPENAI_API_KEY,
-          },
-        },
-        ui = {
-          prompt_icon = require("base.utils").get_icon("PromptPrefix"),
-        },
-      }
-    end,
+    name = 'amazonq',
+    url = 'ssh://git.amazon.com/pkg/AmazonQNVim',
+    lazy = false,
+    opts = {
+      ssoStartUrl = 'https://amzn.awsapps.com/start',
+      -- Note: It's normally not necessary to change default `lsp_server_cmd`.
+      -- lsp_server_cmd = {
+      --   'node',
+      --   vim.fn.stdpath('data') .. '/lazy/AmazonQNVim/language-server/build/aws-lsp-codewhisperer-token-binary.js',
+      --   '--stdio',
+      -- },
+      -- 
+    },
   },
 
   --  copilot [github code suggestions]
@@ -427,6 +449,8 @@ return {
     config = function()
       local dap = require("dap")
 
+      dap.set_log_level("debug")
+
       -- C#
       dap.adapters.coreclr = {
         type = 'executable',
@@ -453,6 +477,35 @@ return {
       -- Java
       -- Note: The java debugger jdtls is automatically spawned and configured
       -- by the plugin 'nvim-java' in './3-dev-core.lua'.
+      dap.configurations.java = {
+        {
+          type = "java",
+          request = "launch",
+          name = "Debug JUnit Test",
+          mainClass = "org.eclipse.jdt.internal.junit.runner.RemoteTestRunner",
+          projectName = vim.fn.fnamemodify(vim.fn.getcwd(), ":p"),
+          cwd = vim.fn.getcwd(),
+          sourcePaths = { "${workspaceFolder}/src/test/java" },
+          classPaths = {
+            "${workspaceFolder}/target/test-classes",
+            "${workspaceFolder}/target/classes",
+          },
+          modulePaths = {},
+          args = "",
+          vmArgs = "-DmixMode=MMM --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/java.nio.channels=ALL-UNNAMED --add-opens=java.base/java.time=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent.locks=ALL-UNNAMED --add-opens=java.base/jdk.internal.access=ALL-UNNAMED --add-opens=java.base/jdk.internal.misc=ALL-UNNAMED --add-opens=java.base/jdk.internal.ref=ALL-UNNAMED --add-opens=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/sun.net.dns=ALL-UNNAMED --add-opens=java.base/sun.security.x509=ALL-UNNAMED --add-opens=java.base/sun.security.util=ALL-UNNAMED --add-opens=java.base/sun.security.ssl=ALL-UNNAMED",
+          noDebug = false,
+          shortenCommandLine = "argfile",
+        },
+        {
+          type = "java",
+          request = "attach",
+          name = "Debug (Attach) - Remote",
+          hostName = "127.0.0.1",
+          port = 5005,
+          vmArgs = "-DmixMode=MMM --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/java.nio.channels=ALL-UNNAMED --add-opens=java.base/java.time=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent.locks=ALL-UNNAMED --add-opens=java.base/jdk.internal.access=ALL-UNNAMED --add-opens=java.base/jdk.internal.misc=ALL-UNNAMED --add-opens=java.base/jdk.internal.ref=ALL-UNNAMED --add-opens=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/sun.net.dns=ALL-UNNAMED --add-opens=java.base/sun.security.x509=ALL-UNNAMED --add-opens=java.base/sun.security.util=ALL-UNNAMED --add-opens=java.base/sun.security.ssl=ALL-UNNAMED",
+          shortenCommandLine = "argfile",
+        },
+      }
 
       -- Python
       dap.adapters.python = {
@@ -736,7 +789,9 @@ return {
       "rcarriga/cmp-dap",
       "jay-babu/mason-nvim-dap.nvim",
       "jbyuki/one-small-step-for-vimkind",
-      "nvim-java/nvim-java",
+      "nvim-neotest/nvim-nio",
+      -- "nvim-java/nvim-java",
+      "mfussenegger/nvim-jdtls",
     },
   },
 
