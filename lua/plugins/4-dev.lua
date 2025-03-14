@@ -145,6 +145,12 @@ return {
     end,
   },
 
+  { url = "ssh://git.amazon.com:2222/pkg/Vim-code-browse",
+    branch = "mainline",
+    dependencies = "tpope/vim-fugitive",
+    event = "VeryLazy",
+  },
+
   --  ANALYZER ----------------------------------------------------------------
   --  [symbols tree]
   --  https://github.com/stevearc/aerial.nvim
@@ -325,21 +331,37 @@ return {
   --  NOTE: This plugin is disabled by default.
   --        To enable it set the next env var in your OS:
   --        OPENAI_API_KEY="my_key_here"
+  -- {
+  --   "dense-analysis/neural",
+  --   cmd = { "Neural" },
+  --   config = function()
+  --     require("neural").setup {
+  --       source = {
+  --         openai = {
+  --           api_key = vim.env.OPENAI_API_KEY,
+  --         },
+  --       },
+  --       ui = {
+  --         prompt_icon = require("base.utils").get_icon("PromptPrefix"),
+  --       },
+  --     }
+  --   end,
+  -- },
+
   {
-    "dense-analysis/neural",
-    cmd = { "Neural" },
-    config = function()
-      require("neural").setup {
-        source = {
-          openai = {
-            api_key = vim.env.OPENAI_API_KEY,
-          },
-        },
-        ui = {
-          prompt_icon = require("base.utils").get_icon("PromptPrefix"),
-        },
-      }
-    end,
+    name = 'amazonq',
+    url = 'ssh://git.amazon.com/pkg/AmazonQNVim',
+    lazy = false,
+    opts = {
+      ssoStartUrl = 'https://amzn.awsapps.com/start',
+      -- Note: It's normally not necessary to change default `lsp_server_cmd`.
+      -- lsp_server_cmd = {
+      --   'node',
+      --   vim.fn.stdpath('data') .. '/lazy/AmazonQNVim/language-server/build/aws-lsp-codewhisperer-token-binary.js',
+      --   '--stdio',
+      -- },
+      -- 
+    },
   },
 
   --  copilot [github code suggestions]

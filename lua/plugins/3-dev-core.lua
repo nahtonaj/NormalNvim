@@ -241,7 +241,8 @@ return {
   {
     "neovim/nvim-lspconfig",
     event = "User BaseFile",
-    dependencies = "nvim-java/nvim-java",
+    -- dependencies = "nvim-java/nvim-java",
+    dependencies = "mfussenegger/nvim-jdtls",
   },
 
   -- mason-lspconfig [auto start lsp clients]
@@ -286,7 +287,7 @@ return {
     },
     opts = {
       registries = {
-        "github:nvim-java/mason-registry",
+        -- "github:nvim-java/mason-registry",
         "github:mason-org/mason-registry",
       },
       ui = {
@@ -429,7 +430,7 @@ return {
         { path = "nvim-treesitter-textobjects", mods = { "nvim-treesitter", "nvim-treesitter-textobjects" } },
         { path = "markdown.nvim", mods = { "render-markdown" } },
         { path = "nvim-highlight-colors", mods = { "nvim-highlight-colors" } },
-        { path = "nvim-java", mods = { "java" } },
+        -- { path = "nvim-java", mods = { "java" } },
         { path = "nvim-lspconfig", mods = { "lspconfig" } },
         { path = "mason-lspconfig.nvim", mods = { "mason-lspconfig" } },
         { path = "mason.nvim", mods = { "mason", "mason-core", "mason-registry", "mason-vendor" } },

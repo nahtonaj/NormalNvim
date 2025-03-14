@@ -158,7 +158,7 @@ end
 
 local function enable_debugger(bufnr)
   require('jdtls').setup_dap({ hotcodereplace = 'auto' })
-  require('jdtls.dap').setup_dap_main_class_configs()
+  require('jdtls.dap').setup_dap_main_class_configs({verbose = true})
   local opts = {
     config_overrides = {
       shortenCommandLine = "argfile",

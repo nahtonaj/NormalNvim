@@ -42,7 +42,22 @@ return {
     ---@type snacks.Config
     opts = {
       bigfile = { enabled = true },
-      dashboard = { enabled = true },
+      dashboard = {
+        enabled = true,
+        sections = {
+          { section = "header" },
+          { section = "keys",   gap = 1, padding = 1 },
+          { section = "startup" },
+          {
+            section = "terminal",
+            cmd = "pokemon-colorscripts -r --no-title; sleep .1",
+            random = 10,
+            pane = 2,
+            indent = 4,
+            height = 30,
+          },
+        },
+      },
       explorer = { enabled = true },
       indent = { enabled = true },
       input = { enabled = true },
@@ -52,7 +67,7 @@ return {
       },
       picker = {
         layout = {
-          preview = "main",
+          -- preview = "main",
           preset = "ivy"
         },
         matcher = {
@@ -72,7 +87,7 @@ return {
       words = { enabled = true },
       styles = {
         notification = {
-          -- wo = { wrap = true } -- Wrap notifications
+          wo = { wrap = true } -- Wrap notifications
         }
       }
     },
@@ -101,14 +116,14 @@ return {
       { "<leader>gf",      function() Snacks.picker.git_log_file() end,                            desc = "Git Log File" },
       -- Grep
       { "<leader>sb",      function() Snacks.picker.lines() end,                                   desc = "Buffer Lines" },
-      { "<leader>sB",      function() Snacks.picker.grep_buffers() end,                            desc = "Grep Open Buffers" },
+      { "<leader>sB",      function() Snacks.picker.grep_buffers(insert_mode_onshow) end,                            desc = "Grep Open Buffers" },
       { "<leader>sg",      function() Snacks.picker.grep(insert_mode_onshow) end,                                    desc = "Grep" },
-      { "<leader>sw",      function() Snacks.picker.grep_word() end,                               desc = "Visual selection or word", mode = { "n", "x" } },
+      { "<leader>sw",      function() Snacks.picker.grep_word(insert_mode_onshow) end,                               desc = "Visual selection or word", mode = { "n", "x" } },
       -- search
       { '<leader>s"',      function() Snacks.picker.registers() end,                               desc = "Registers" },
       { '<leader>s/',      function() Snacks.picker.search_history() end,                          desc = "Search History" },
       { "<leader>sa",      function() Snacks.picker.autocmds() end,                                desc = "Autocmds" },
-      { "<leader>sb",      function() Snacks.picker.lines() end,                                   desc = "Buffer Lines" },
+      { "<leader>sb",      function() Snacks.picker.lines(insert_mode_onshow) end,                                   desc = "Buffer Lines" },
       { "<leader>sc",      function() Snacks.picker.command_history() end,                         desc = "Command History" },
       { "<leader>sC",      function() Snacks.picker.commands() end,                                desc = "Commands" },
       { "<leader>sd",      function() Snacks.picker.diagnostics() end,                             desc = "Diagnostics" },
@@ -120,6 +135,7 @@ return {
       { "<leader>sk",      function() Snacks.picker.keymaps() end,                                 desc = "Keymaps" },
       { "<leader>sl",      function() Snacks.picker.loclist() end,                                 desc = "Location List" },
       { "<leader>sm",      function() Snacks.picker.marks() end,                                   desc = "Marks" },
+      { "<leader>sn",      function() Snacks.notifier.show_history() end,                          desc = "Notifications" },
       { "<leader>sM",      function() Snacks.picker.man() end,                                     desc = "Man Pages" },
       { "<leader>sp",      function() Snacks.picker.lazy() end,                                    desc = "Search for Plugin Spec" },
       { "<leader>sq",      function() Snacks.picker.qflist() end,                                  desc = "Quickfix List" },
@@ -139,7 +155,6 @@ return {
       { "<leader>Z",       function() Snacks.zen.zoom() end,                                       desc = "Toggle Zoom" },
       { "<leader>.",       function() Snacks.scratch() end,                                        desc = "Toggle Scratch Buffer" },
       { "<leader>S",       function() Snacks.scratch.select() end,                                 desc = "Select Scratch Buffer" },
-      { "<leader>n",       function() Snacks.notifier.show_history() end,                          desc = "Notification History" },
       { "<leader>bd",      function() Snacks.bufdelete() end,                                      desc = "Delete Buffer" },
       { "<leader>cR",      function() Snacks.rename.rename_file() end,                             desc = "Rename File" },
       { "<leader>gB",      function() Snacks.gitbrowse() end,                                      desc = "Git Browse",               mode = { "n", "v" } },
