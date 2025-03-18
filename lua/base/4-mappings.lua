@@ -623,9 +623,25 @@ if is_available("gitsigns.nvim") then
 end
 -- git fugitive
 if is_available("vim-fugitive") then
-  maps.n["<leader>gP"] = {
-    function() vim.cmd(":GBrowse") end,
+  maps.n["<leader>gB"] = {
+    function()
+        vim.cmd(":GBrowse!")
+        vim.fn.getchar()
+    end,
     desc = "Open in github ",
+  }
+  maps.v["<leader>gB"] = {
+    function()
+        vim.cmd(":'<,'>GBrowse!")
+        vim.fn.getchar()
+    end,
+    desc = "Open selection in github ",
+  }
+  maps.n["<leader>ga"] = {
+    function()
+        vim.cmd(":G blame")
+    end,
+    desc = "Git blame",
   }
 end
 -- git client
