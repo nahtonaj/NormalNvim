@@ -203,7 +203,9 @@ M.jdtls_setup = function(event)
   local jdtls = require('jdtls')
 
   local path = get_jdtls_paths()
-  local data_dir = path.data_dir .. vim.fn.fnamemodify(vim.fn.getcwd(), ':p')
+	local project_path = vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h')
+	local project_path_hash = string.gsub(project_path, '[/\\:+-]', '_')
+  local data_dir = path.data_dir .. project_path_hash
 
   if cache_vars.capabilities == nil then
     jdtls.extendedClientCapabilities.resolveAdditionalTextEditsSupport = true

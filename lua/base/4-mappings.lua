@@ -118,6 +118,10 @@ maps.n["<leader>q"] = {
   end,
   desc = "Quit",
 }
+maps.n["<leader>Q"] = {
+  "<cmd>:qa<CR>",
+  desc = "Quit all",
+}
 maps.n["<Tab>"] = {
   "<Tab>",
   noremap = true,
