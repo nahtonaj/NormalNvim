@@ -1289,7 +1289,7 @@ if is_available("markdown-preview.nvim") or is_available("markmap.nvim") or is_a
   -- Markdown preview
   if is_available("markdown-preview.nvim") then
     maps.n["<leader>Dp"] = {
-      function() vim.cmd("MarkdownPreview") end,
+      function() vim.cmd("silent! MarkdownPreview") end,
       desc = "Markdown preview",
     }
   end
