@@ -172,16 +172,16 @@ return {
   -- nvim-java [java support]
   -- https://github.com/nvim-java/nvim-java
   -- Reliable jdtls support. Must go before mason-lspconfig and lsp-config.
+  -- NOTE: Let's use our fork until they merge pull request
+  --       https://github.com/nvim-java/nvim-java/pull/376
   {
-    -- 'nvim-java/nvim-java',
-    'mfussenegger/nvim-jdtls',
+    "zeioth/nvim-java",
     ft = { "java" },
     dependencies = {
       "MunifTanjim/nui.nvim",
       "neovim/nvim-lspconfig",
       "mfussenegger/nvim-dap",
-      -- "mfussenegger/nvim-jdtls",
-      "williamboman/mason.nvim",
+      "mason-org/mason.nvim",
     },
     config = function() require('base.utils.jdtls') end
     -- opts = {
@@ -372,11 +372,11 @@ return {
   },
 
   -- mason-lspconfig [auto start lsp]
-  -- https://github.com/williamboman/mason-lspconfig.nvim
+  -- https://github.com/mason-org/mason-lspconfig.nvim
   -- This plugin auto starts the lsp servers installed by Mason
   -- every time Neovim trigger the event FileType.
   {
-    "williamboman/mason-lspconfig.nvim",
+    "mason-org/mason-lspconfig.nvim",
     dependencies = { "neovim/nvim-lspconfig" },
     event = "User BaseFile",
     opts = function(_, opts)
@@ -391,10 +391,10 @@ return {
   },
 
   --  mason [lsp package manager]
-  --  https://github.com/williamboman/mason.nvim
+  --  https://github.com/mason-org/mason.nvim
   --  https://github.com/zeioth/mason-extra-cmds
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     dependencies = { "zeioth/mason-extra-cmds", opts = {} },
     cmd = {
       "Mason",
@@ -435,7 +435,7 @@ return {
     "zeioth/none-ls-autoload.nvim",
     event = "User BaseFile",
     dependencies = {
-      "williamboman/mason.nvim",
+      "mason-org/mason.nvim",
       "zeioth/none-ls-external-sources.nvim"
     },
     opts = {
@@ -597,6 +597,7 @@ return {
         { path = "nvim-dap-ui", mods = { "dapui" } },
         { path = "cmp-dap", mods = { "cmp_dap" } },
         { path = "mason-nvim-dap.nvim", mods = { "mason-nvim-dap" } },
+        { path = "mason.nvim", mods = { "mason", "mason-core", "mason-registry", "mason-test", "mason-vendor" } },
         { path = "one-small-step-for-vimkind", mods = { "osv" } },
         { path = "neotest-dart", mods = { "neotest-dart" } },
         { path = "neotest-dotnet", mods = { "neotest-dotnet" } },
