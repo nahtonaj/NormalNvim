@@ -172,193 +172,36 @@ return {
   -- nvim-java [java support]
   -- https://github.com/nvim-java/nvim-java
   -- Reliable jdtls support. Must go before mason-lspconfig and lsp-config.
-  -- NOTE: Let's use our fork until they merge pull request
-  --       https://github.com/nvim-java/nvim-java/pull/376
-  {
-    "zeioth/nvim-java",
-    ft = { "java" },
-    dependencies = {
-      "MunifTanjim/nui.nvim",
-      "neovim/nvim-lspconfig",
-      "mfussenegger/nvim-dap",
-      "mason-org/mason.nvim",
-    },
-    config = function() require('base.utils.jdtls') end
-    -- opts = {
-    --   notifications = {
-    --     dap = true,
-    --   },
-    --   -- NOTE: One of these files must be in your project root directory.
-    --   --       Otherwise the debugger will end in the wrong directory and fail.
-    --   root_markers = {
-    --     -- 'settings.gradle',
-    --     -- 'settings.gradle.kts',
-    --     -- 'pom.xml',
-    --     -- 'build.xml',
-    --     -- 'build.gradle',
-    --     -- 'mvnw',
-    --     -- 'gradlew',
-    --     -- 'build.gradle',
-    --     -- 'build.gradle.kts',
-    --     -- '.git',
-    --     'packageInfo',
-    --     'Config'
-    --   },
-    -- },
-  },
-    {
-    "scalameta/nvim-metals",
-    dependencies = {
-      "saghen/blink.cmp",
-      "nvim-lua/plenary.nvim",
-      {
-        "j-hui/fidget.nvim",
-        opts = {},
-      },
-      {
-        "mfussenegger/nvim-dap",
-        config = function(self, opts)
-          -- Debug settings if you're using nvim-dap
-          require("telescope").extensions.metals.commands()
-          local dap = require("dap")
-          --
-          -- dap.configurations.scala = {
-          --   {
-          --     type = "scala",
-          --     request = "launch",
-          --     name = "RunOrTest",
-          --     metals = {
-          --       runType = "runOrTestFile",
-          --       --args = { "firstArg", "secondArg", "thirdArg" }, -- here just as an example
-          --     },
-          --   },
-          --   {
-          --     type = "scala",
-          --     request = "launch",
-          --     name = "Test Target",
-          --     metals = {
-          --       runType = "testTarget",
-          --     },
-          --   },
-          -- }
-        end
-      },
-    },
-    ft = { "scala", "sbt", "java", "bazel", "bzl" },
-    opts = function()
-      local metals_config = require("metals").bare_config()
-      metals_config.find_root_dir_max_project_nesting = 5
-      metals_config.root_patterns = {'.git'}
-      metals_config.init_options.statusBarProvider = "on"
-      metals_config.capabilities = require('blink.cmp').get_lsp_capabilities()
-
-      metals_config.settings = {
-        autoImportBuild = 'initial',
-        showImplicitArguments = true,
-        verboseCompilation = true,
-        inlayHints = {
-          byNameParameters = { enable = true },
-          hintsInPatternMatch = { enable = true },
-          implicitArguments = { enable = true },
-          implicitConversions = { enable = true },
-          inferredTypes = { enable = true },
-          typeParameters = { enable = true },
-        }
-      }
-      metals_config.on_attach = function(client, bufnr)
-        -- your on_attach function
-        -- require("metals").setup_dap()
-
-
-
-        -- LSP mappings
-        map("n", ";", vim.lsp.buf.hover)
-
-        -- map("n", "gD", vim.lsp.buf.definition)
-        -- map("n", "gi", vim.lsp.buf.implementation)
-        -- map("n", "gr", vim.lsp.buf.references)
-        -- map("n", "gds", vim.lsp.buf.document_symbol)
-        -- map("n", "gws", vim.lsp.buf.workspace_symbol)
-        -- map("n", "<leader>cl", vim.lsp.codelens.run)
-        -- map("n", "<leader>sh", vim.lsp.buf.signature_help)
-        -- map("n", "<leader>rn", vim.lsp.buf.rename)
-        -- map("n", "<leader>f", vim.lsp.buf.format)
-        -- map("n", "<leader>ca", vim.lsp.buf.code_action)
-        --
-        -- map("n", "<leader>ws", function()
-        --   require("metals").hover_worksheet()
-        -- end)
-        --
-        -- -- all workspace diagnostics
-        -- map("n", "<leader>aa", vim.diagnostic.setqflist)
-        --
-        -- -- all workspace errors
-        -- map("n", "<leader>ae", function()
-        --   vim.diagnostic.setqflist({ severity = "E" })
-        -- end)
-        --
-        -- -- all workspace warnings
-        -- map("n", "<leader>aw", function()
-        --   vim.diagnostic.setqflist({ severity = "W" })
-        -- end)
-        --
-        -- -- buffer diagnostics only
-        -- map("n", "<leader>d", vim.diagnostic.setloclist)
-        --
-        -- map("n", "[c", function()
-        --   vim.diagnostic.goto_prev({ wrap = false })
-        -- end)
-        --
-        -- map("n", "]c", function()
-        --   vim.diagnostic.goto_next({ wrap = false })
-        -- end)
-        --
-        -- -- Example mappings for usage with nvim-dap. If you don't use that, you can
-        -- -- skip these
-        -- map("n", "<leader>dc", function()
-        --   require("dap").continue()
-        -- end)
-        --
-        -- map("n", "<leader>dr", function()
-        --   require("dap").repl.toggle()
-        -- end)
-        --
-        -- map("n", "<leader>dK", function()
-        --   require("dap.ui.widgets").hover()
-        -- end)
-        --
-        -- map("n", "<leader>dt", function()
-        --   require("dap").toggle_breakpoint()
-        -- end)
-        --
-        -- map("n", "<leader>dso", function()
-        --   require("dap").step_over()
-        -- end)
-        --
-        -- map("n", "<leader>dsi", function()
-        --   require("dap").step_into()
-        -- end)
-        --
-        -- map("n", "<leader>dl", function()
-        --   require("dap").run_last()
-        -- end)
-      end
-
-      return metals_config
-    end,
-    config = function(self, metals_config)
-      local nvim_metals_group = vim.api.nvim_create_augroup("nvim-metals", { clear = true })
-      vim.api.nvim_create_autocmd("FileType", {
-        pattern = self.ft,
-        callback = function()
-          metals_config.find_root_dir_max_project_nesting = 5
-          metals_config.root_patterns = {'.git'}
-          require("metals").initialize_or_attach(metals_config)
-        end,
-        group = nvim_metals_group,
-      })
-    end
-  },
+  -- NOTE: Temporarely disabled until its main dev becomes active again.
+  --       It currently fails with Mason v2.
+  -- {
+  --   "zeioth/nvim-java",
+  --   ft = { "java" },
+  --   dependencies = {
+  --     "MunifTanjim/nui.nvim",
+  --     "neovim/nvim-lspconfig",
+  --     "mfussenegger/nvim-dap",
+  --     "mason-org/mason.nvim",
+  --   },
+  --   opts = {
+  --     notifications = {
+  --       dap = false,
+  --     },
+  --     -- NOTE: One of these files must be in your project root directory.
+  --     --       Otherwise the debugger will end in the wrong directory and fail.
+  --     root_markers = {
+  --       'settings.gradle',
+  --       'settings.gradle.kts',
+  --       'pom.xml',
+  --       'build.gradle',
+  --       'mvnw',
+  --       'gradlew',
+  --       'build.gradle',
+  --       'build.gradle.kts',
+  --       '.git',
+  --     },
+  --   },
+  -- },
 
 
   --  nvim-lspconfig [lsp configs]
@@ -367,7 +210,7 @@ return {
   {
     "neovim/nvim-lspconfig",
     event = "User BaseFile",
-    dependencies = "zeioth/nvim-java",
+    -- dependencies = "zeioth/nvim-java",
   },
 
   -- mason-lspconfig [auto start lsp]
@@ -406,7 +249,7 @@ return {
     },
     opts = {
       registries = {
-        "github:nvim-java/mason-registry",
+        -- "github:nvim-java/mason-registry",
         "github:mason-org/mason-registry",
       },
       ui = {
