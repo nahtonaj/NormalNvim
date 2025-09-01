@@ -82,7 +82,6 @@ vim.g.icons_enabled = true -- Enable icons in the UI (disable if no nerd font is
 vim.g.lsp_round_borders_enabled = true -- Enable round borders for lsp hover and signatureHelp.
 vim.g.lsp_signature_enabled = true -- Enable automatically showing lsp help as you write function parameters.
 vim.g.notifications_enabled = true -- Enable notifications.
-vim.g.semantic_tokens_enabled = true -- Enable lsp semantic tokens at start.
 vim.g.url_effect_enabled = true -- Highlight URLs with an underline effect.
 vim.g.minianimate_disable = true
 

@@ -451,8 +451,8 @@ if is_available("nvim-highlight-colors") then
   maps.n["<leader>uC"] =
   { "<cmd>HighlightColors toggle<cr>", desc = "Hex #colors" }
 end
-maps.n["<leader>ud"] = { ui.toggle_diagnostics, desc = "Diagnostics" }
-maps.n["<leader>uI"] = { ui.set_indent, desc = "Change indent setting" }
+maps.n["<leader>ud"] = { ui.toggle_diagnostics, desc = "LSP Diagnostics" }
+maps.n["<leader>uD"] = { ui.set_indent, desc = "Change indent setting" }
 maps.n["<leader>ug"] = { ui.toggle_signcolumn, desc = "Signcolumn" }
 maps.n["<leader>ul"] = { ui.toggle_statusline, desc = "Statusline" }
 maps.n["<leader>un"] = { ui.change_number, desc = "Change line numbering" }
@@ -1601,17 +1601,6 @@ function M.lsp_mappings(client, bufnr)
     function() require("base.utils.ui").toggle_buffer_inlay_hints(bufnr) end,
     desc = "LSP inlay hints (buffer)",
   }
-
-  -- Toggle semantic tokens
-  if vim.g.semantic_tokens_enabled then
-    vim.b[bufnr].semantic_tokens_enabled = true
-    lsp_mappings.n["<leader>uY"] = {
-      function() require("base.utils.ui").toggle_buffer_semantic_tokens(bufnr) end,
-      desc = "LSP semantic highlight (buffer)",
-    }
-  else
-    client.server_capabilities.semanticTokensProvider = nil
-  end
 
   -- LSP based search
   -- lsp_mappings.n["<leader>lS"] = { function() vim.lsp.buf.workspace_symbol() end, desc = "Search symbol in workspace" }
