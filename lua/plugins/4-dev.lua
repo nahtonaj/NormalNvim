@@ -145,12 +145,6 @@ return {
     end,
   },
 
-  { url = "ssh://git.amazon.com:2222/pkg/Vim-code-browse",
-    branch = "mainline",
-    dependencies = "tpope/vim-fugitive",
-    event = "VeryLazy",
-  },
-
   --  ANALYZER ----------------------------------------------------------------
   --  [symbols tree]
   --  https://github.com/stevearc/aerial.nvim
@@ -320,54 +314,38 @@ return {
   --  NOTE: In order for this plugin to work, you will have to set
   --        the next env var in your OS:
   --        OPENAI_API_KEY="my_key_here"
-  -- {
-  --   "dense-analysis/neural",
-  --   cmd = { "Neural" },
-  --   config = function()
-  --     require("neural").setup {
-  --       source = {
-  --         openai = {
-  --           api_key = vim.env.OPENAI_API_KEY,
-  --         },
-  --       },
-  --       ui = {
-  --         prompt_icon = require("base.utils").get_icon("PromptPrefix"),
-  --       },
-  --     }
-  --   end,
-  -- },
-
   {
-    name = 'amazonq',
-    url = 'ssh://git.amazon.com/pkg/AmazonQNVim',
-    lazy = false,
-    opts = {
-      ssoStartUrl = 'https://amzn.awsapps.com/start',
-      -- Note: It's normally not necessary to change default `lsp_server_cmd`.
-      -- lsp_server_cmd = {
-      --   'node',
-      --   vim.fn.stdpath('data') .. '/lazy/AmazonQNVim/language-server/build/aws-lsp-codewhisperer-token-binary.js',
-      --   '--stdio',
-      -- },
-      -- 
-    },
+    "dense-analysis/neural",
+    cmd = { "Neural" },
+    config = function()
+      require("neural").setup {
+        source = {
+          openai = {
+            api_key = vim.env.OPENAI_API_KEY,
+          },
+        },
+        ui = {
+          prompt_icon = require("base.utils").get_icon("PromptPrefix"),
+        },
+      }
+    end,
   },
 
   --  copilot [github code suggestions]
   --  https://github.com/github/copilot.vim
   --  As alternative to chatgpt, you can use copilot uncommenting this.
   --  Then you must run :Copilot setup
-  -- {
-  --   "github/copilot.vim",
-  --   event = "User BaseFile"
-  -- },
+  {
+    "github/copilot.vim",
+    event = "User BaseFile"
+  },
   -- copilot-cmp
   -- https://github.com/zbirenbaum/copilot-cmp
-  -- {
-  --   "zbirenbaum/copilot-cmp",
-  --   opts = { suggesion = { enabled = false }, panel = { enabled = false } },
-  --   config = function (_, opts) require("copilot_cmp").setup(opts) end
-  -- },
+  {
+    "zbirenbaum/copilot-cmp",
+    opts = { suggesion = { enabled = false }, panel = { enabled = false } },
+    config = function (_, opts) require("copilot_cmp").setup(opts) end
+  },
 
   -- [guess-indent]
   -- https://github.com/NMAC427/guess-indent.nvim
