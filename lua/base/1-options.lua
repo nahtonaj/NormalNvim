@@ -8,7 +8,7 @@ vim.g.default_colorscheme = "astromars"
 
 -- Options --------------------------------------------------------------------
 vim.opt.breakindent = true -- Wrap indent to match  line start.
-vim.opt.clipboard = "unnamedplus" -- Connection to the system clipboard.
+-- vim.opt.clipboard = "unnamedplus" -- Connection to the system clipboard.
 vim.opt.cmdheight = 0 -- Hide command line unless needed.
 vim.opt.completeopt = { "menu", "menuone", "noselect" } -- Options for insert mode completion.
 vim.opt.copyindent = true -- Copy the previous indentation on autoindenting.

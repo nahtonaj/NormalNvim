@@ -318,28 +318,111 @@ return {
     config = function(_, opts) require("markmap").setup(opts) end,
   },
 
-  --  ARTIFICIAL INTELLIGENCE  -------------------------------------------------
-  --  neural [chatgpt code generator]
-  --  https://github.com/dense-analysis/neural
-  --
-  --  NOTE: This plugin is disabled by default.
-  --        To enable it set the next env var in your OS:
-  --        OPENAI_API_KEY="my_key_here"
   {
-    "dense-analysis/neural",
-    cmd = { "Neural" },
-    config = function()
-      require("neural").setup {
-        source = {
-          openai = {
-            api_key = vim.env.OPENAI_API_KEY,
+    "yetone/avante.nvim",
+    -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
+    -- ⚠️ must add this setting! ! !
+    build = vim.fn.has("win32") ~= 0
+        and "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false"
+        or "make",
+    event = "VeryLazy",
+    version = false, -- Never set this value to "*"! Never!
+    ---@module 'avante'
+    ---@type avante.Config
+    opts = {
+      -- Project-specific instructions
+      instructions_file = "avante.md",
+
+      -- Use local llm CLI via HTTP wrapper
+      provider = "openai",
+
+      providers = {
+        openai = {
+          endpoint = "http://127.0.0.1:8765/v1/chat/completions",
+          model = "claude-3-7-sonnet",
+          timeout = 30000,
+          api_key_name = "",  -- No API key needed for local server
+          extra_request_body = {
+            temperature = 0,
+            max_tokens = 4096,
           },
         },
-        ui = {
-          prompt_icon = require("base.utils").get_icon("PromptPrefix"),
+      },
+
+      behaviour = {
+        auto_suggestions = false, -- Experimental
+        auto_set_highlight_group = true,
+        auto_set_keymaps = true,
+        auto_apply_diff_after_generation = true,
+        support_paste_from_clipboard = false,
+      },
+
+      mappings = {
+        diff = {
+          ours = "co",
+          theirs = "ct",
+          all_theirs = "ca",
+          both = "cb",
+          cursor = "cc",
+          next = "]x",
+          prev = "[x",
         },
-      }
-    end,
+        jump = {
+          next = "]]",
+          prev = "[[",
+        },
+        submit = {
+          normal = "<CR>",
+          insert = "<C-s>",
+        },
+      },
+
+      hints = { enabled = true },
+
+      windows = {
+        position = "right",
+        wrap = true,
+        width = 30,
+      },
+    },
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "MunifTanjim/nui.nvim",
+      --- The below dependencies are optional,
+      "nvim-mini/mini.pick", -- for file_selector provider mini.pick
+      "nvim-telescope/telescope.nvim", -- for file_selector provider telescope
+      "hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
+      "ibhagwan/fzf-lua", -- for file_selector provider fzf
+      "stevearc/dressing.nvim", -- for input provider dressing
+      "folke/snacks.nvim", -- for input provider snacks
+      "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
+      "zbirenbaum/copilot.lua", -- for providers='copilot'
+      {
+        -- support for image pasting
+        "HakonHarnes/img-clip.nvim",
+        event = "VeryLazy",
+        opts = {
+          -- recommended settings
+          default = {
+            embed_image_as_base64 = false,
+            prompt_for_file_name = false,
+            drag_and_drop = {
+              insert_mode = true,
+            },
+            -- required for Windows users
+            use_absolute_path = true,
+          },
+        },
+      },
+      {
+        -- Make sure to set this up properly if you have lazy=true
+        'MeanderingProgrammer/render-markdown.nvim',
+        opts = {
+          file_types = { "markdown", "Avante" },
+        },
+        ft = { "markdown", "Avante" },
+      },
+    },
   },
 
   --  copilot [github code suggestions]

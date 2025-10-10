@@ -136,8 +136,8 @@ maps.n["<Tab>"] = {
 --      is the keycode for scrolling, and remapping it would break it.
 if not is_android then
   -- only useful when the option clipboard is commented on ./1-options.lua
-  maps.n["<C-y>"] = { '"+y<esc>', desc = "Copy to cliboard" }
-  maps.x["<C-y>"] = { '"+y<esc>', desc = "Copy to cliboard" }
+  maps.n["<C-y>"] = { '"+y<esc>', desc = "Copy to clipboard" }
+  maps.x["<C-y>"] = { '"+y<esc>', desc = "Copy to clipboard" }
   maps.n["<C-p>"] = { '"+p<esc>', desc = "Paste from clipboard" }
 end
 
