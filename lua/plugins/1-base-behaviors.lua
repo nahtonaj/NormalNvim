@@ -291,6 +291,9 @@ return {
     opts = {
       ignored_filetypes = { "nofile", "quickfix", "qf", "prompt" },
       ignored_buftypes = { "nofile" },
+      -- Enable tmux integration for seamless navigation
+      at_edge = 'wrap',
+      multiplexer_integration = 'tmux',
     },
   },
 
@@ -693,6 +696,20 @@ return {
     requires = 'nvim-telescope/telescope.nvim',
     event = "User BaseFile",
     opts = {}
+  },
+
+  --  nvim-osc52 [OSC52 clipboard for SSH]
+  --  https://github.com/ojroques/nvim-osc52
+  --  Enables copying to system clipboard over SSH/tmux using OSC52 escape sequences
+  {
+    "ojroques/nvim-osc52",
+    event = "User BaseDefered",
+    opts = {
+      max_length = 0,           -- Maximum length of selection (0 for no limit)
+      silent = false,           -- Disable message on successful copy
+      trim = false,             -- Trim surrounding whitespaces before copy
+      tmux_passthrough = true,  -- Use tmux passthrough (requires tmux >= 3.2)
+    },
   },
 
   --  zen-mode.nvim [distraction free mode]

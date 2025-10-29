@@ -602,6 +602,7 @@ return {
         Array = "󰅪",
         Boolean = "⊨",
         Class = "󰌗",
+        Copilot = "",
         Constructor = "",
         Copilot = "",
         Key = "󰌆",

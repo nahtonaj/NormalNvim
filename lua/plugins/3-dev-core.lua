@@ -280,9 +280,48 @@ return {
       metals_config.capabilities = require('blink.cmp').get_lsp_capabilities()
 
       metals_config.settings = {
+        -- Auto import settings
         autoImportBuild = 'initial',
         showImplicitArguments = true,
         verboseCompilation = true,
+
+        -- Databricks BSP settings
+        -- Note: bspExecutable, customRepositories, and preferredBuildServer are VSCode/Cursor-specific settings
+        -- For nvim-metals:
+        --   - BSP executable is configured via .bsp/bazelbsp.json
+        --   - Preferred build server is auto-detected from .bsp/ directory
+        --   - Custom repositories are passed via Coursier in serverProperties
+        defaultBspToBuildTool = true,
+        fallbackScalaVersion = "2.13.16",
+
+        -- JVM properties for Metals server (Databricks optimized)
+        serverProperties = {
+          "-Xmx16G",
+          "-XX:+HeapDumpOnOutOfMemoryError",
+          "-XX:G1PeriodicGCInterval=5000",
+          "-XX:MinHeapFreeRatio=10",
+          "-XX:MaxHeapFreeRatio=40",
+          "-XX:+UseStringDeduplication",
+          "-XX:+IgnoreUnrecognizedVMOptions",
+          "-Dmetals.telemetry=enabled",
+          "-Djol.magicFieldOffset=true",
+          "-Djol.tryWithSudo=true",
+          "-Djdk.attach.allowAttachSelf",
+          "--add-opens=java.base/java.nio=ALL-UNNAMED",
+          "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED",
+          -- Custom Databricks repositories for Coursier dependency resolution
+          -- Format: -Dcoursier.repositories=repo1|repo2|repo3
+          "-Dcoursier.repositories=" .. table.concat({
+            "file:///opt/databricks/m2",
+            "ivy:file:///opt/databricks/ivy2/[defaultPattern]",
+            "ivy2local",
+            "s3://databricks-build-artifacts-staging/metals/release",
+            "central",
+            "https://maven.pkg.github.com/databricks-eng/metals",
+          }, "|"),
+        },
+
+        -- Inlay hints
         inlayHints = {
           byNameParameters = { enable = true },
           hintsInPatternMatch = { enable = true },
@@ -293,10 +332,10 @@ return {
         }
       }
       metals_config.on_attach = function(client, bufnr)
-        -- your on_attach function
+        -- Setup DAP for debugging
         require("metals").setup_dap()
 
-        -- Apply standard LSP mappings
+        -- Apply standard LSP mappings (includes Metals-specific keybindings from 4-mappings.lua)
         utils_lsp.apply_user_lsp_mappings(client, bufnr)
       end
 
@@ -727,6 +766,7 @@ return {
           -- Note: Priority decides the order items appear.
           { name = "nvim_lsp", priority = 1000 },
           { name = "lazydev",  priority = 850 },
+          { name = "copilot",  priority = 800 },
           { name = "luasnip",  priority = 750 },
           { name = "copilot",  priority = 600 },
           { name = "buffer",   priority = 500 },

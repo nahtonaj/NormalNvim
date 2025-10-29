@@ -135,9 +135,37 @@ maps.n["<Tab>"] = {
 -- BUG: We disable these mappings on termux by default because <C-y>
 --      is the keycode for scrolling, and remapping it would break it.
 if not is_android then
-  -- only useful when the option clipboard is commented on ./1-options.lua
-  maps.n["<C-y>"] = { '"+y<esc>', desc = "Copy to clipboard" }
-  maps.x["<C-y>"] = { '"+y<esc>', desc = "Copy to clipboard" }
+  -- Use OSC52 for copying over SSH/tmux
+  maps.n["<C-y>"] = {
+    function()
+      local osc52_available, osc52 = pcall(require, 'osc52')
+      if osc52_available then
+        -- Copy current line if nothing is selected
+        vim.cmd('normal! yy')
+        local text = vim.fn.getreg('"')
+        osc52.copy(text)
+      else
+        -- Fallback to system clipboard if OSC52 not available
+        vim.cmd('normal! "+yy')
+      end
+    end,
+    desc = "Copy line to clipboard (OSC52)"
+  }
+  maps.x["<C-y>"] = {
+    function()
+      local osc52_available, osc52 = pcall(require, 'osc52')
+      if osc52_available then
+        -- Copy visual selection
+        vim.cmd('normal! "vy')
+        local text = vim.fn.getreg('v')
+        osc52.copy(text)
+      else
+        -- Fallback to system clipboard if OSC52 not available
+        vim.cmd('normal! "+y')
+      end
+    end,
+    desc = "Copy selection to clipboard (OSC52)"
+  }
   maps.n["<C-p>"] = { '"+p<esc>', desc = "Paste from clipboard" }
 end
 
@@ -413,19 +441,20 @@ maps.n["<leader>b|"] = {
   desc = "Vertical split buffer from tabline",
 }
 
--- quick buffer switching
-maps.n["<C-k>"] = {
-  function()
-    require("heirline-components.buffer").nav(vim.v.count > 0 and vim.v.count or 1)
-  end,
-  desc = "Next buffer",
-}
-maps.n["<C-j>"] = {
-  function()
-    require("heirline-components.buffer").nav(-(vim.v.count > 0 and vim.v.count or 1))
-  end,
-  desc = "Previous buffer",
-}
+-- quick buffer switching (disabled in favor of C-j/C-k for split navigation)
+-- Use ]b and [b for buffer navigation instead
+-- maps.n["<C-k>"] = {
+--   function()
+--     require("heirline-components.buffer").nav(vim.v.count > 0 and vim.v.count or 1)
+--   end,
+--   desc = "Next buffer",
+-- }
+-- maps.n["<C-j>"] = {
+--   function()
+--     require("heirline-components.buffer").nav(-(vim.v.count > 0 and vim.v.count or 1))
+--   end,
+--   desc = "Previous buffer",
+-- }
 
 -- tabs
 maps.n["]t"] = { function() vim.cmd.tabnext() end, desc = "Next tab" }
@@ -1579,15 +1608,40 @@ function M.lsp_mappings(client, bufnr)
     desc = "Signature help",
   }
   --
-  -- Goto man
-  lsp_mappings.n["gm"] = {
+  -- Goto man (rebind to capital M to avoid conflict with Metals)
+  lsp_mappings.n["gM"] = {
     function() vim.api.nvim_feedkeys("K", "n", false) end,
     desc = "Hover man",
   }
-  lsp_mappings.n["<leader>lm"] = {
+  lsp_mappings.n["<leader>lM"] = {
     function() vim.api.nvim_feedkeys("K", "n", false) end,
     desc = "Hover man",
   }
+  --
+  -- Metals commands (only active for Scala files)
+  if is_available("nvim-metals") then
+    lsp_mappings.n["<leader>lm"] = { desc = get_icon("Metals", true) .. " Metals" }
+    lsp_mappings.n["<leader>lmc"] = {
+      function() require('metals').compile_cascade() end,
+      desc = "Metals compile cascade",
+    }
+    lsp_mappings.n["<leader>lmi"] = {
+      function() require('metals').organize_imports() end,
+      desc = "Organize imports",
+    }
+    lsp_mappings.n["<leader>lmb"] = {
+      function() require('metals').build_import() end,
+      desc = "Build import",
+    }
+    lsp_mappings.n["<leader>lms"] = {
+      function() require('metals').scan_sources() end,
+      desc = "Scan workspace sources",
+    }
+    lsp_mappings.n["<leader>lmr"] = {
+      function() require('telescope').extensions.metals.commands() end,
+      desc = "Metals commands",
+    }
+  end
   --
   -- Rename symbol
   lsp_mappings.n["<leader>lr"] = {

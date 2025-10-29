@@ -37,6 +37,7 @@ return {
   Docs = "",
   Git = "󰊢",
   LSP = "",
+  Metals = "",
 
   -- Heirline-components - tabline
   BufferClose = "󰅖",
