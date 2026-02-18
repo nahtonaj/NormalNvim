@@ -66,10 +66,10 @@ return {
         enabled = true
       },
       quickfile = { enabled = true },
-      scope = { enabled = true },
+      scope = { enabled = false },
       scroll = { enabled = false },
       statuscolumn = { enabled = true },
-      words = { enabled = true },
+      words = { enabled = false },
       styles = {
         notification = {
           -- wo = { wrap = true } -- Wrap notifications
@@ -204,6 +204,7 @@ return {
   -- Make sure you have yazi installed on your system!
   {
     "mikavilpas/yazi.nvim",
+    tag = "v10.3.0", -- pin: v11.0.0+ requires nvim 0.11+
     event = "User BaseDefered",
     cmd = { "Yazi", "Yazi cwd", "Yazi toggle" },
     opts = {
@@ -846,7 +847,7 @@ return {
       },
       autocmd = {
         enabled = true,
-        updatetime = 100,
+        updatetime = 300,
       },
       sign = { enabled = false },
       virtual_text = {

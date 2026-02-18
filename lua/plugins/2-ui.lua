@@ -239,7 +239,7 @@ return {
     event = "User BaseDefered",
     opts = function()
       local fps
-      if is_android then fps = 30 else fps = 244 end
+      fps = 30
 
       return {
         timeout = 2500,
@@ -439,6 +439,7 @@ return {
   --  But its Telescope extension is added in the Telescope 'config' section.
   {
     "nvim-telescope/telescope.nvim",
+    tag = "v0.1.9", -- pin: v0.2.0+ requires nvim 0.10.4+
     dependencies = {
       {
         "debugloop/telescope-undo.nvim",
@@ -629,6 +630,7 @@ return {
   --  https://github.com/petertriho/nvim-scrollbar
   {
     "petertriho/nvim-scrollbar",
+    enabled = false,
     event = "User BaseFile",
     opts = {
       handlers = {
@@ -654,7 +656,7 @@ return {
   {
     "nvim-mini/mini.animate",
     event = "User BaseFile",
-    enabled = not is_android,
+    enabled = false,
     opts = function()
       -- don't use animate when scrolling with the mouse
       local mouse_scrolled = false

@@ -372,6 +372,7 @@ return {
   -- This plugin auto start the lsp clients installed by Mason.
   {
     "mason-org/mason-lspconfig.nvim",
+    tag = "v1.32.0", -- pin: v2.0.0+ requires nvim 0.11+
     dependencies = { "neovim/nvim-lspconfig" },
     event = "User BaseFile",
     opts = {},

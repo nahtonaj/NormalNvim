@@ -325,7 +325,7 @@ return {
     build = vim.fn.has("win32") ~= 0
         and "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false"
         or "make",
-    event = "VeryLazy",
+    cmd = { "AvanteAsk", "AvanteChat", "AvanteToggle", "AvanteEdit" },
     version = false, -- Never set this value to "*"! Never!
     ---@module 'avante'
     ---@type avante.Config
@@ -434,6 +434,8 @@ return {
   --        and login using your GitHub account.
   {
     "zbirenbaum/copilot.lua",
+    enabled = false,
+    commit = "f12709a120ddb62e560afe8e956b6ea6955286df", -- pin: later commits require nvim 0.11+
     event = "User BaseDefered", -- Ensure it loads before mason-lspconfig.
     opts = {},
   },

@@ -44,7 +44,7 @@ vim.opt.undofile = true -- Enable persistent undo between session and reboots.
 vim.opt.updatetime = 300 -- Length of time to wait before triggering the plugin.
 vim.opt.virtualedit = "block" -- Allow going past end of line in visual block mode.
 vim.opt.writebackup = false -- Disable making a backup before overwriting a file.
-vim.opt.shada = "!,'1000,<50,s10,h" -- Remember the last 1000 opened files
+vim.opt.shada = "!,'300,<50,s10,h" -- Remember the last 1000 opened files
 vim.opt.history = 1000 -- Number of commands to remember in a history table (per buffer).
 vim.opt.swapfile = false -- Ask what state to recover when opening a file that was not saved.
 vim.opt.wrap = true -- Disable wrapping of lines longer than the width of window.
@@ -52,7 +52,7 @@ vim.opt.colorcolumn = "80" -- PEP8 like character limit vertical bar.
 vim.opt.mousescroll = "ver:1,hor:0" -- Disables hozirontal scroll in neovim.
 vim.opt.guicursor = "n:blinkon200,i-ci-ve:ver25" -- Enable cursor blink.
 vim.opt.autochdir = true -- Use current file dir as working dir (See project.nvim).
-vim.opt.scrolloff = 30 -- Number of lines to leave before/after the cursor when scrolling. Setting a high value keep the cursor centered.
+vim.opt.scrolloff = 8 -- Number of lines to leave before/after the cursor when scrolling. Setting a high value keep the cursor centered.
 vim.opt.sidescrolloff = 8 -- Same but for side scrolling.
 vim.opt.selection = "old" -- Don't select the newline symbol when using <End> on visual mode.
 
@@ -67,7 +67,7 @@ if is_android then vim.opt.mouse = "v" else vim.opt.mouse = "a" end -- Enable sc
 -- Globals --------------------------------------------------------------------
 vim.g.mapleader = " " -- Set leader key.
 vim.g.maplocalleader = "," -- Set default local leader key.
-vim.g.big_file = { size = 1024 * 5000, lines = 50000 } -- For files bigger than this, disable 'treesitter' (+5Mb).
+vim.g.big_file = { size = 1024 * 1000, lines = 10000 } -- For files bigger than this, disable 'treesitter' (+5Mb).
 
 -- The next globals are toggleable with <space + l + u>
 vim.g.autoformat_enabled = false -- Enable auto formatting at start.
