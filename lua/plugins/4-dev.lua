@@ -22,6 +22,7 @@
 --       ## ARTIFICIAL INTELLIGENCE
 --       -> neural                         [chatgpt code generator]
 --       -> copilot                        [github code suggestions]
+--       -> claudecode.nvim                [claude code integration]
 --       -> guess-indent                   [guess-indent]
 
 --       ## COMPILER
@@ -331,6 +332,29 @@ return {
     commit = "f12709a120ddb62e560afe8e956b6ea6955286df", -- pin: later commits require nvim 0.11+
     event = "User BaseDefered", -- Ensure it loads before mason-lspconfig.
     opts = {},
+  },
+
+  --  claudecode.nvim [claude code integration]
+  --  https://github.com/coder/claudecode.nvim
+  --  Editor-aware Claude Code integration via WebSocket.
+  --  Launches 'llm agent session' and gives Claude access to open files,
+  --  selections, and diagnostics. Claude can propose edits as native diffs.
+  {
+    "coder/claudecode.nvim",
+    dependencies = { "folke/snacks.nvim" },
+    opts = {
+      terminal_cmd = "llm agent session",
+    },
+    keys = {
+      { "<leader>ac", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude Code" },
+      { "<leader>as", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Send to Claude" },
+      { "<leader>af", "<cmd>ClaudeCodeFocus<cr>", desc = "Focus Claude Code" },
+      { "<leader>aa", "<cmd>ClaudeCodeAdd<cr>", desc = "Add file to context" },
+    },
+    cmd = {
+      "ClaudeCode", "ClaudeCodeSend", "ClaudeCodeFocus",
+      "ClaudeCodeAdd", "ClaudeCodeDiffAccept", "ClaudeCodeDiffDeny",
+    },
   },
 
   -- [guess-indent]

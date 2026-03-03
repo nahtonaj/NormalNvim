@@ -135,38 +135,21 @@ maps.n["<Tab>"] = {
 -- BUG: We disable these mappings on termux by default because <C-y>
 --      is the keycode for scrolling, and remapping it would break it.
 if not is_android then
-  -- Use OSC52 for copying over SSH/tmux
   maps.n["<C-y>"] = {
     function()
-      local osc52_available, osc52 = pcall(require, 'osc52')
-      if osc52_available then
-        -- Copy current line if nothing is selected
-        vim.cmd('normal! yy')
-        local text = vim.fn.getreg('"')
-        osc52.copy(text)
-      else
-        -- Fallback to system clipboard if OSC52 not available
-        vim.cmd('normal! "+yy')
-      end
+      local ok = pcall(vim.cmd, 'normal! "+yy')
+      vim.notify(ok and "Copied line to clipboard" or "Copy to clipboard failed", ok and vim.log.levels.INFO or vim.log.levels.ERROR)
     end,
-    desc = "Copy line to clipboard (OSC52)"
+    desc = "Copy line to clipboard",
   }
   maps.x["<C-y>"] = {
     function()
-      local osc52_available, osc52 = pcall(require, 'osc52')
-      if osc52_available then
-        -- Copy visual selection
-        vim.cmd('normal! "vy')
-        local text = vim.fn.getreg('v')
-        osc52.copy(text)
-      else
-        -- Fallback to system clipboard if OSC52 not available
-        vim.cmd('normal! "+y')
-      end
+      local ok = pcall(vim.cmd, 'normal! "+y')
+      vim.notify(ok and "Copied selection to clipboard" or "Copy to clipboard failed", ok and vim.log.levels.INFO or vim.log.levels.ERROR)
     end,
-    desc = "Copy selection to clipboard (OSC52)"
+    desc = "Copy selection to clipboard",
   }
-  maps.n["<C-p>"] = { '"+p<esc>', desc = "Paste from clipboard" }
+  maps.n["<C-p>"] = { '"+p', desc = "Paste from clipboard" }
 end
 
 -- Make 'c' key not copy to clipboard when changing a character.

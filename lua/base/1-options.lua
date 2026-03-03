@@ -8,7 +8,34 @@ vim.g.default_colorscheme = "astromars"
 
 -- Options --------------------------------------------------------------------
 vim.opt.breakindent = true -- Wrap indent to match  line start.
--- vim.opt.clipboard = "unnamedplus" -- Connection to the system clipboard.
+-- Use OSC 52 as clipboard provider (works over SSH/tmux, explicit with <C-y>/<C-p>)
+-- Custom copy wraps in DCS passthrough when inside tmux so the sequence
+-- reaches the outer terminal instead of being intercepted by tmux.
+local function osc52_copy(reg)
+  local clipboard = reg == '+' and 'c' or 'p'
+  return function(lines)
+    local s = table.concat(lines, '\n')
+    local encoded = vim.base64.encode(s)
+    local osc = string.format('\027]52;%s;%s\027\\', clipboard, encoded)
+    if vim.env.TMUX then
+      osc = string.format('\027Ptmux;\027%s\027\\',
+        osc:gsub('\027', '\027\027'))
+    end
+    vim.api.nvim_chan_send(2, osc)
+  end
+end
+
+vim.g.clipboard = {
+  name = 'OSC 52',
+  copy = {
+    ['+'] = osc52_copy('+'),
+    ['*'] = osc52_copy('*'),
+  },
+  paste = {
+    ['+'] = require('vim.ui.clipboard.osc52').paste('+'),
+    ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
+  },
+}
 vim.opt.cmdheight = 0 -- Hide command line unless needed.
 vim.opt.completeopt = { "menu", "menuone", "noselect" } -- Options for insert mode completion.
 vim.opt.copyindent = true -- Copy the previous indentation on autoindenting.

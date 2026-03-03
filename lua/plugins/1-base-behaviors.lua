@@ -699,19 +699,6 @@ return {
     opts = {}
   },
 
-  --  nvim-osc52 [OSC52 clipboard for SSH]
-  --  https://github.com/ojroques/nvim-osc52
-  --  Enables copying to system clipboard over SSH/tmux using OSC52 escape sequences
-  {
-    "ojroques/nvim-osc52",
-    event = "User BaseDefered",
-    opts = {
-      max_length = 0,           -- Maximum length of selection (0 for no limit)
-      silent = false,           -- Disable message on successful copy
-      trim = false,             -- Trim surrounding whitespaces before copy
-      tmux_passthrough = true,  -- Use tmux passthrough (requires tmux >= 3.2)
-    },
-  },
 
   --  zen-mode.nvim [distraction free mode]
   --  https://github.com/folke/zen-mode.nvim
